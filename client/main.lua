@@ -50,6 +50,7 @@ local function gearAnim()
     lib.requestAnimDict("clothingshirt")
 
 	TaskPlayAnim(cache.ped, "clothingshirt", "try_shirt_positive_d", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
+    RemoveAnimDict("clothingshirt")
 end
 
 local function takeCoral(coral)

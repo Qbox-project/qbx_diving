@@ -89,12 +89,12 @@ RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coral, bool)
 
     if amount > 1 then
         for _ = 1, amount, 1 do
-            Player.Functions.AddItem(ItemData["name"], 1)
+            Player.Functions.AddItem(ItemData.name, 1)
 
             Wait(250)
         end
     else
-        Player.Functions.AddItem(ItemData["name"], amount)
+        Player.Functions.AddItem(ItemData.name, amount)
     end
 
     if (Config.CoralLocations[area].totalCoral - 1) == 0 then
