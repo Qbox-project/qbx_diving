@@ -1,5 +1,4 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-local isLoggedIn = LocalPlayer.state['isLoggedIn']
 local zones = {}
 local currentArea = 0
 local inSellerZone = false
@@ -236,13 +235,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
 
         setDivingLocation(area)
         createSeller()
-
-        isLoggedIn = true
     end)
-end)
-
-RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    isLoggedIn = false
 end)
 
 RegisterNetEvent('qb-diving:client:NewLocations', function()
@@ -399,7 +392,7 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
         else
             QBCore.Functions.Notify(Lang:t("error.need_otube"), 'error')
         end
-    elseif iswearingsuit == true then
+    elseif iswearingsuit then
         gearAnim()
 
         QBCore.Functions.Progressbar("remove_gear", Lang:t("info.pullout_suit"), 5000, false, true, {}, {}, {}, {}, function() -- Done
@@ -424,7 +417,7 @@ end)
 
 -- Threads
 CreateThread(function()
-    if isLoggedIn then
+    if LocalPlayer.state.isLoggedIn then
         QBCore.Functions.TriggerCallback('qb-diving:server:GetDivingConfig', function(config, area)
             Config.CoralLocations = config
 
@@ -433,12 +426,14 @@ CreateThread(function()
         end)
     end
 
-    if Config.UseTarget then return end
+    if Config.UseTarget then
+        return
+    end
 
     while true do
         local sleep = 1000
 
-        if isLoggedIn then
+        if LocalPlayer.state.isLoggedIn then
             if currentArea ~= 0 then
                 sleep = 0
 
