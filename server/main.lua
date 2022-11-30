@@ -71,7 +71,10 @@ RegisterNetEvent('qb-diving:server:SellCoral', function()
             Player.Functions.AddMoney('cash', math.ceil(reward / item.amount), "sold-coral")
         end
     else
-        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.no_coral"), 'error')
+        TriggerClientEvent('ox_lib:notify', src, {
+            description = Lang:t("error.no_coral"),
+            type = 'error'
+        })
     end
 end)
 
