@@ -353,33 +353,17 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
                             if IsPedSwimmingUnderWater(cache.ped) then
                                 oxgenlevell = oxgenlevell - 1
 
-                                if oxgenlevell == 90 then
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                                elseif oxgenlevell == 80 then
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                                elseif oxgenlevell == 70 then
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                                elseif oxgenlevell == 60 then
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                                elseif oxgenlevell == 50 then
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                                elseif oxgenlevell == 40 then
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                                elseif oxgenlevell == 30 then
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                                elseif oxgenlevell == 20 then
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                                elseif oxgenlevell == 10 then
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                                elseif oxgenlevell == 0 then
-                                    SetEnableScuba(cache.ped, false)
-                                    SetPedMaxTimeUnderwater(cache.ped, 1.00)
+if oxgenlevell % 10 == 0 and not oxgenlevell == 100 then
+    TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
+elseif oxgenlevell == 0 then
+    SetEnableScuba(cache.ped, false)
+    SetPedMaxTimeUnderwater(cache.ped, 1.00)
 
-                                    currentGear.enabled = false
-                                    iswearingsuit = false
+    currentGear.enabled = false
+    iswearingsuit = false
 
-                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", nil, 0.25)
-                                end
+    TriggerServerEvent("InteractSound_SV:PlayOnSource", nil, 0.25)
+end
                             end
 
                             Wait(1000)
