@@ -158,7 +158,7 @@ local function sellCoral()
 end
 
 local function createSeller()
-    for current in Config.SellLocations do
+    for i, current in pairs(Config.SellLocations) do
         current.model = type(current.model) == 'string' and GetHashKey(current.model) or current.model
         RequestModel(current.model)
         while not HasModelLoaded(current.model) do
@@ -276,7 +276,7 @@ end
 
 RegisterNetEvent('qb-diving:client:UseGear', function()
     local ped = PlayerPedId()
-    if iswearingsuit then 
+    if iswearingsuit then
         gearAnim()
         QBCore.Functions.Progressbar("remove_gear", Lang:t("info.pullout_suit"), 5000, false, true, {}, {}, {}, {}, function()
             SetEnableScuba(ped, false)
@@ -290,9 +290,9 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
             oxgenlevell = oxgenlevell
         end)
     else
-        if oxgenlevell <= 0 then 
+        if oxgenlevell <= 0 then
             QBCore.Functions.Notify(Lang:t("error.need_otube"), 'error')
-            return 
+            return
         end
 
         iswearingsuit = true
