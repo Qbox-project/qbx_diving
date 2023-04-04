@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qbx-core']:GetCoreObject()
 local currentDivingArea = math.random(1, #Config.CoralLocations)
 local availableCoral = {}
 
