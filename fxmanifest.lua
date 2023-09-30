@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'QBX-Diving'
+description 'qbx_Diving'
 version '1.0.0'
 
 shared_script {
