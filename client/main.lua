@@ -350,7 +350,7 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
             CreateThread(function()
                 while currentGear.enabled and IsPedSwimmingUnderWater(cache.ped) do
                     oxygenLevel -= 1
-                    if oxygenLevel % 10 == 0 and not oxygenLevel == 100 then
+                    if oxygenLevel % 10 == 0 and oxygenLevel ~= 100 then
                         TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
                     elseif oxygenLevel == 0 then
                         SetEnableScuba(cache.ped, false)
