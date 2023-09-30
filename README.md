@@ -1,6 +1,6 @@
-# qbx-diving
+# qbx_diving
 
-Diving Script For QBX-Core
+Diving Script For qbx_Core
 
 # [VIDEO]
 https://youtu.be/pPYsy1tKPVM (needs an update after ox conversion)

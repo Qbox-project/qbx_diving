@@ -1,4 +1,3 @@
-local QBCore = exports['qbx-core']:GetCoreObject()
 local isLoggedIn = LocalPlayer.state.isLoggedIn
 local zones = {}
 local currentArea = 0
@@ -142,10 +141,10 @@ local function setDivingLocation(divingLocation)
             zones[k]:onPlayerInOut(function(inside)
                 if inside then
                     currentArea = k
-                    exports['qbx-core']:DrawText(Lang:t("info.collect_coral_dt"))
+                    lib.showTextUI(Lang:t("info.collect_coral_dt"))
                 else
                     currentArea = 0
-                    exports['qbx-core']:HideText()
+                    lib.hideTextUI()
                 end
             end)
         end
@@ -164,7 +163,7 @@ local function sellCoral()
     }) then
         TriggerServerEvent('qb-diving:server:SellCoral')
     else
-        QBCore.Functions.Notify(Lang:t("error.canceled"), "error")
+        exports.qbx_core:Notify(Lang:t("error.canceled"), "error")
     end
 
     ClearPedTasks(cache.ped)
@@ -277,12 +276,12 @@ end)
 RegisterNetEvent("qb-diving:client:setoxygenlevel", function()
     if oxygenLevel == 0 then
         oxygenLevel = 100 -- oxygenlevel
-        QBCore.Functions.Notify(Lang:t("success.tube_filled"), 'success')
+        exports.qbx_core:Notify(Lang:t("success.tube_filled"), 'success')
         TriggerServerEvent('qb-diving:server:removeItemAfterFill')
         return
     end
 
-    QBCore.Functions.Notify(Lang:t("error.oxygenlevel", {oxygenlevel = oxygenLevel}), 'error')
+    exports.qbx_core:Notify(Lang:t("error.oxygenlevel", {oxygenlevel = oxygenLevel}), 'error')
 end)
 
 RegisterNetEvent('qb-diving:client:UseGear', function()
@@ -302,7 +301,7 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
             SetPedMaxTimeUnderwater(cache.ped, 50.00)
             currentGear.enabled = false
             deleteGear()
-            QBCore.Functions.Notify(Lang:t("success.took_out"))
+            exports.qbx_core:Notify(Lang:t("success.took_out"))
             TriggerServerEvent("InteractSound_SV:PlayOnSource", nil, 0.25)
             isWearingSuit = false
             oxygenLevel = oxygenLevel
@@ -311,14 +310,14 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
         ClearPedTasks(cache.ped)
     else
         if oxygenLevel <= 0 then
-            QBCore.Functions.Notify(Lang:t("error.need_otube"), 'error')
+            exports.qbx_core:Notify(Lang:t("error.need_otube"), 'error')
             return
         end
 
         isWearingSuit = true
 
         if IsPedSwimming(cache.ped) or cache.vehicle then
-            QBCore.Functions.Notify(Lang:t("error.not_standing_up"), 'error')
+            exports.qbx_core:Notify(Lang:t("error.not_standing_up"), 'error')
             return
         end
 
@@ -351,7 +350,7 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
             CreateThread(function()
                 while currentGear.enabled and IsPedSwimmingUnderWater(cache.ped) do
                     oxygenLevel -= 1
-                    if oxygenLevel % 10 == 0 and not oxygenLevel == 100 then
+                    if oxygenLevel % 10 == 0 and oxygenLevel ~= 100 then
                         TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
                     elseif oxygenLevel == 0 then
                         SetEnableScuba(cache.ped, false)
