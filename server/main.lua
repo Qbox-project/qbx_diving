@@ -1,13 +1,14 @@
 local currentDivingArea = math.random(1, #Config.CoralLocations)
-local availableCoral = {}
-
--- Functions
 
 local function getItemPrice(amount, price)
-    for k, v in pairs(Config.PriceModifiers) do
-        local modifier = #Config.PriceModifiers == k and amount >= v.minAmount or amount >= v.minAmount and amount <= v.maxAmount
-        if modifier then
-            price /= 100 * math.random(v.minPercentage, v.maxPercentage)
+    for i = 1, #Config.PriceModifiers do
+        local modifier = Config.PriceModifiers[i]
+        local shouldModify = i == #Config.PriceModifiers and
+            amount >= modifier.minAmount or
+            amount >= modifier.minAmount and
+            amount <= modifier.maxAmount
+        if shouldModify then
+            price /= 100 * math.random(modifier.minPercentage, modifier.maxPercentage)
             price = math.ceil(price)
         end
     end
@@ -16,84 +17,66 @@ local function getItemPrice(amount, price)
 end
 
 local function hasCoral(src)
-    local Player = exports.qbx_core:GetPlayer(src)
-    if not Player then return false end
+    local availableCoral = {}
 
-    availableCoral = {}
-
-    for _, v in pairs(Config.CoralTypes) do
-        local item = Player.Functions.GetItemByName(v.item)
-        if item then
-            availableCoral[#availableCoral + 1] = v
+    for i = 1, #Config.CoralTypes do
+        local coralType = Config.CoralTypes[i]
+        if exports.ox_inventory:Search(src, 'count', coralType.item) > 0 then
+            availableCoral[#availableCoral + 1] = coralType
         end
     end
 
-    return table.type(availableCoral) ~= 'empty'
+    return availableCoral
 end
 
--- Events
-
 RegisterNetEvent('qb-diving:server:CallCops', function(coords)
-    for _, Player in pairs(exports.qbx_core:GetQBPlayers()) do
-        if Player then
-            if Player.PlayerData.job.type == "leo" and Player.PlayerData.job.onduty then
-                local msg = Lang:t("info.cop_msg")
-                TriggerClientEvent('qb-diving:client:CallCops', Player.PlayerData.source, coords, msg)
-                local alertData = {
-                    title = Lang:t("info.cop_title"),
-                    coords = coords,
-                    description = msg
-                }
-                TriggerClientEvent("qb-phone:client:addPoliceAlert", -1, alertData)
-            end
+    for _, player in pairs(exports.qbx_core:GetQBPlayers()) do
+        if player.PlayerData.job.type == 'leo' and player.PlayerData.job.onduty then
+            local msg = Lang:t("info.cop_msg")
+            TriggerClientEvent('qb-diving:client:CallCops', player.PlayerData.source, coords, msg)
+            local alertData = {
+                title = Lang:t("info.cop_title"),
+                coords = coords,
+                description = msg
+            }
+            TriggerClientEvent("qb-phone:client:addPoliceAlert", -1, alertData)
         end
     end
 end)
 
 RegisterNetEvent('qb-diving:server:SellCoral', function()
     local src = source
-    local Player = exports.qbx_core:GetPlayer(src)
-    if not Player then return end
-
-    if not hasCoral(src) then
+    local player = exports.qbx_core:GetPlayer(src)
+    local availableCoral = hasCoral(src)
+    if #availableCoral == 0 then
         TriggerClientEvent('QBCore:Notify', src, Lang:t("error.no_coral"), 'error')
         return
     end
 
-    for _, v in pairs(availableCoral) do
-        local item = Player.Functions.GetItemByName(v.item)
-        local price = item.amount * v.price
-        local reward = getItemPrice(item.amount, price)
-        Player.Functions.RemoveItem(item.name, item.amount)
-        Player.Functions.AddMoney('cash', math.ceil(reward / item.amount), "sold-coral")
-        TriggerClientEvent('inventory:client:ItemBox', src, exports.ox_inventory:Items()[item.name], "remove")
+    for i = 1, #availableCoral do
+        local coral = availableCoral[i]
+        local amount = exports.ox_inventory:Search(src, 'count', coral.item)
+        local price = amount * coral.price
+        local reward = getItemPrice(amount, price)
+        exports.ox_inventory:RemoveItem(src, coral.item, amount)
+        player.Functions.AddMoney('cash', math.ceil(reward / amount), "sold-coral")
     end
 end)
 
+--- TODO: do not modify Config
 RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coral, bool)
     local src = source
-    local Player = exports.qbx_core:GetPlayer(src)
-    if not Player then return end
+    local coralType = Config.CoralTypes[math.random(1, #Config.CoralTypes)]
+    local amount = math.random(1, coralType.maxAmount)
 
-    local coralType = math.random(1, #Config.CoralTypes)
-    local amount = math.random(1, Config.CoralTypes[coralType].maxAmount)
-    local ItemData = exports.ox_inventory:Items()[Config.CoralTypes[coralType].item]
-    if amount > 1 then
-        for _ = 1, amount, 1 do
-            Player.Functions.AddItem(ItemData["name"], 1)
-            Wait(250)
-        end
-    else
-        Player.Functions.AddItem(ItemData["name"], amount)
-    end
-    if (Config.CoralLocations[area].TotalCoral - 1) == 0 then
+    exports.ox_inventory:AddItem(src, coralType.item, amount)
+    if Config.CoralLocations[area].TotalCoral - 1 == 0 then
         for _, v in pairs(Config.CoralLocations[currentDivingArea].coords.Coral) do
             v.PickedUp = false
         end
         Config.CoralLocations[currentDivingArea].TotalCoral = Config.CoralLocations[currentDivingArea].DefaultCoral
         local newLocation = math.random(1, #Config.CoralLocations)
         while newLocation == currentDivingArea do
-            Wait(0)
             newLocation = math.random(1, #Config.CoralLocations)
         end
         currentDivingArea = newLocation
@@ -107,20 +90,13 @@ RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coral, bool)
 end)
 
 RegisterNetEvent('qb-diving:server:removeItemAfterFill', function()
-    local src = source
-    local Player = exports.qbx_core:GetPlayer(src)
-    if not Player then return end
-
-    Player.Functions.RemoveItem("diving_fill", 1)
+    exports.ox_inventory:RemoveItem(source, 'diving_fill', 1)
 end)
 
--- Callbacks
-
+--- TODO: config should be static. Client shouldn't need a config update
 lib.callback.register('qb-diving:server:GetDivingConfig', function()
     return Config.CoralLocations, currentDivingArea
 end)
-
--- Items
 
 exports.qbx_core:CreateUseableItem("diving_gear", function(source)
     TriggerClientEvent("qb-diving:client:UseGear", source)
