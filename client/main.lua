@@ -1,8 +1,7 @@
-local isLoggedIn = false
+local isLoggedIn = LocalPlayer.state.isLoggedIn
 local coralZones = {}
 local coralTargetZones = {}
 local currentArea = 0
-local inSellerZone = false
 local isWearingSuit = false
 local oxygenLevel = 0
 local currentDivingLocation = {
@@ -143,6 +142,12 @@ local function setDivingLocation(divingLocation)
                 onExit = function()
                     currentArea = 0
                     lib.hideTextUI()
+                end,
+                inside = function()
+                    if IsControlJustPressed(0, 51) then -- E
+                        takeCoral(currentArea)
+                        lib.hideTextUI()
+                    end
                 end
             })
         end
@@ -191,13 +196,17 @@ local function createSeller()
                 rotation = current.coords.w,
                 size = vec3(current.zoneOptions.length, current.zoneOptions.width, 3),
                 onEnter = function()
-                    inSellerZone = true
                     lib.showTextUI(Lang:t("info.sell_coral_dt"))
                 end,
                 onExit = function()
-                    inSellerZone = false
                     lib.hideTextUI()
                 end,
+                inside = function()
+                    if IsControlJustPressed(0, 51) then -- E
+                        sellCoral()
+                        lib.hideTextUI()
+                    end
+                end
             })
         end
     end
@@ -265,7 +274,7 @@ end)
 
 RegisterNetEvent("qb-diving:client:setoxygenlevel", function()
     if oxygenLevel == 0 then
-        oxygenLevel = Config.OxygenLevel -- oxygenlevel
+        oxygenLevel = Config.OxygenLevel
         exports.qbx_core:Notify(Lang:t("success.tube_filled"), 'success')
         TriggerServerEvent('qb-diving:server:removeItemAfterFill')
         return
@@ -360,37 +369,12 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
     end
 end)
 
--- Threads
-
 CreateThread(function()
-    if isLoggedIn then
-        local config, area = lib.callback.await('qb-diving:server:GetDivingConfig', false)
-        Config.CoralLocations = config
-        setDivingLocation(area)
-        createSeller()
-    end
-    if Config.UseTarget then return end
-    while isLoggedIn do
-        local sleep = 1000
-        if currentArea ~= 0 then
-            sleep = 0
-            if IsControlJustPressed(0, 51) then -- E
-                takeCoral(currentArea)
-                lib.hideTextUI()
-                sleep = 3000
-            end
-        end
-
-        if inSellerZone then
-            sleep = 0
-            if IsControlJustPressed(0, 51) then -- E
-                sellCoral()
-                lib.hideTextUI()
-                sleep = 3000
-            end
-        end
-        Wait(sleep)
-    end
+    if not isLoggedIn then return end
+    local config, area = lib.callback.await('qb-diving:server:GetDivingConfig', false)
+    Config.CoralLocations = config
+    setDivingLocation(area)
+    createSeller()
 end)
 
 CreateThread(function()
