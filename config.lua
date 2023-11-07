@@ -38,7 +38,6 @@ Config.CoralLocations = {
                 },
             }
         },
-        DefaultCoral = 4,
         TotalCoral = 4,
     },
     {
@@ -69,7 +68,6 @@ Config.CoralLocations = {
                 },
             }
         },
-        DefaultCoral = 3,
         TotalCoral = 3,
     },
     {
@@ -100,7 +98,6 @@ Config.CoralLocations = {
                 },
             }
         },
-        DefaultCoral = 3,
         TotalCoral = 3,
     },
     {
@@ -131,7 +128,6 @@ Config.CoralLocations = {
                 },
             }
         },
-        DefaultCoral = 3,
         TotalCoral = 3,
     },
     {
@@ -169,7 +165,6 @@ Config.CoralLocations = {
                 },
             }
         },
-        DefaultCoral = 4,
         TotalCoral = 4,
     },
     {
@@ -207,7 +202,6 @@ Config.CoralLocations = {
                 },
             }
         },
-        DefaultCoral = 4,
         TotalCoral = 4,
     },
     {
@@ -245,7 +239,6 @@ Config.CoralLocations = {
                 },
             }
         },
-        DefaultCoral = 4,
         TotalCoral = 4,
     },
 }

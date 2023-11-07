@@ -74,7 +74,7 @@ RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coral, bool)
         for _, v in pairs(Config.CoralLocations[currentDivingArea].coords.Coral) do
             v.PickedUp = false
         end
-        Config.CoralLocations[currentDivingArea].TotalCoral = Config.CoralLocations[currentDivingArea].DefaultCoral
+        Config.CoralLocations[currentDivingArea].TotalCoral = #Config.CoralLocations[currentDivingArea].coords.Coral
         local newLocation = math.random(1, #Config.CoralLocations)
         while newLocation == currentDivingArea do
             newLocation = math.random(1, #Config.CoralLocations)
