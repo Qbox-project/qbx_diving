@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'qbx_Diving'
+description 'qbx_diving'
 version '1.0.0'
 
 shared_script {
@@ -15,8 +15,6 @@ shared_script {
 server_script 'server/main.lua'
 
 client_scripts {
-    '@PolyZone/client.lua',
-    '@PolyZone/BoxZone.lua',
     'client/main.lua'
 }
 

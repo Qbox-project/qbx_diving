@@ -1,5 +1,6 @@
-local isLoggedIn = LocalPlayer.state.isLoggedIn
-local zones = {}
+local isLoggedIn = false
+local coralZones = {}
+local coralTargetZones = {}
 local currentArea = 0
 local inSellerZone = false
 local isWearingSuit = false
@@ -77,12 +78,16 @@ end
 
 local function setDivingLocation(divingLocation)
     if currentDivingLocation.area ~= 0 then
-        for k in pairs(Config.CoralLocations[currentDivingLocation.area].coords.Coral) do
-            if Config.UseTarget then
-                exports['qb-target']:RemoveZone(k)
-            else
-                if next(zones) then zones[k]:destroy() end
+        if Config.UseTarget then
+            for i = 1, #coralTargetZones do
+                exports.ox_target:removeZone(coralTargetZones[i])
             end
+            coralTargetZones = {}
+        else
+            for i = 1, #coralZones do
+                coralZones[i]:remove()
+            end
+            coralZones = {}
         end
     end
 
@@ -112,41 +117,34 @@ local function setDivingLocation(divingLocation)
     currentDivingLocation.blip.label = labelBlip
     for k, v in pairs(Config.CoralLocations[currentDivingLocation.area].coords.Coral) do
         if Config.UseTarget then
-            exports['qb-target']:AddBoxZone('diving_coral_zone_'..k, v.coords, v.length, v.width, {
-                name = 'diving_coral_zone_'..k,
-                heading = v.heading,
-                debugPoly = false,
-                minZ = v.coords.z - 3,
-                maxZ = v.coords.z + 2
-            }, {
+            coralTargetZones[#coralTargetZones] = exports.ox_target:addBoxZone({
+                coords = v.coords,
+                rotation = v.heading,
+                size = vec3(v.length, v.width, 5),
                 options = {
                     {
                         label = Lang:t("info.collect_coral"),
                         icon = 'fa-solid fa-water',
-                        action = function()
+                        onSelect = function()
                             takeCoral(k)
                         end
                     }
                 },
-                distance = 2.0
             })
         else
-            zones[k] = BoxZone:Create(v.coords, v.length, v.width, {
-                name = 'diving_coral_zone_'..k,
-                heading = v.heading,
-                debugPoly = false,
-                minZ = v.coords.z - 3,
-                maxZ = v.coords.z + 2
-            })
-            zones[k]:onPlayerInOut(function(inside)
-                if inside then
+            coralZones[#coralZones + 1] = lib.zones.box({
+                coords = v.coords,
+                rotation = v.heading,
+                size = vec3(v.length, v.width, 5),
+                onEnter = function()
                     currentArea = k
                     lib.showTextUI(Lang:t("info.collect_coral_dt"))
-                else
+                end,
+                onExit = function()
                     currentArea = 0
                     lib.hideTextUI()
                 end
-            end)
+            })
         end
     end
 end
@@ -180,35 +178,27 @@ local function createSeller()
         SetEntityInvincible(ped, true)
         SetBlockingOfNonTemporaryEvents(ped, true)
         if Config.UseTarget then
-            exports['qb-target']:AddTargetEntity(ped, {
-                options = {
-                    {
-                        label = Lang:t("info.sell_coral"),
-                        icon = 'fa-solid fa-dollar-sign',
-                        action = function()
-                            sellCoral()
-                        end
-                    }
-                },
-                distance = 2.0
+            exports.ox_target:addLocalEntity(ped, {
+                {
+                    label = Lang:t("info.sell_coral"),
+                    icon = 'fa-solid fa-dollar-sign',
+                    onSelect = sellCoral,
+                }
             })
         else
-            local zone = BoxZone:Create(current.coords.xyz, current.zoneOptions.length, current.zoneOptions.width, {
-                name = 'diving_coral_seller_'..i,
-                heading = current.coords.w,
-                debugPoly = false,
-                minZ = current.coords.z - 1.5,
-                maxZ = current.coords.z + 1.5
-            })
-            zone:onPlayerInOut(function(inside)
-                if inside then
+            lib.zones.box({
+                coords = current.coords.xyz,
+                rotation = current.coords.w,
+                size = vec3(current.zoneOptions.length, current.zoneOptions.width, 3),
+                onEnter = function()
                     inSellerZone = true
                     lib.showTextUI(Lang:t("info.sell_coral_dt"))
-                else
+                end,
+                onExit = function()
                     inSellerZone = false
                     lib.hideTextUI()
-                end
-            end)
+                end,
+            })
         end
     end
 end
