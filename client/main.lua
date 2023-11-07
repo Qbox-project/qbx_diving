@@ -275,7 +275,7 @@ end)
 
 RegisterNetEvent("qb-diving:client:setoxygenlevel", function()
     if oxygenLevel == 0 then
-        oxygenLevel = 100 -- oxygenlevel
+        oxygenLevel = Config.OxygenLevel -- oxygenlevel
         exports.qbx_core:Notify(Lang:t("success.tube_filled"), 'success')
         TriggerServerEvent('qb-diving:server:removeItemAfterFill')
         return
