@@ -169,7 +169,7 @@ local function sellCoral()
 end
 
 local function createSeller()
-    for i, current in pairs(Config.SellLocations) do
+    for _, current in pairs(Config.SellLocations) do
         current.model = type(current.model) == 'string' and joaat(current.model) or current.model
         lib.requestModel(current.model)
         local currentCoords = vector4(current.coords.x, current.coords.y, current.coords.z - 1, current.coords.w)
