@@ -348,16 +348,18 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
             currentGear.enabled = true
             TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
             CreateThread(function()
-                while currentGear.enabled and IsPedSwimmingUnderWater(cache.ped) do
-                    oxygenLevel -= 1
-                    if oxygenLevel % 10 == 0 and oxygenLevel ~= 100 then
-                        TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
-                    elseif oxygenLevel == 0 then
-                        SetEnableScuba(cache.ped, false)
-                        SetPedMaxTimeUnderwater(cache.ped, 1.00)
-                        currentGear.enabled = false
-                        isWearingSuit = false
-                        TriggerServerEvent("InteractSound_SV:PlayOnSource", nil, 0.25)
+                while currentGear.enabled do
+                    if IsPedSwimmingUnderWater(cache.ped) then
+                        oxygenLevel -= 1
+                        if oxygenLevel % 10 == 0 and oxygenLevel ~= 100 then
+                            TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
+                        elseif oxygenLevel == 0 then
+                            SetEnableScuba(cache.ped, false)
+                            SetPedMaxTimeUnderwater(cache.ped, 1.00)
+                            currentGear.enabled = false
+                            isWearingSuit = false
+                            TriggerServerEvent("InteractSound_SV:PlayOnSource", nil, 0.25)
+                        end
                     end
                     Wait(1000)
                 end
