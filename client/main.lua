@@ -275,7 +275,7 @@ end)
 
 RegisterNetEvent("qb-diving:client:setoxygenlevel", function()
     if oxygenLevel == 0 then
-        oxygenLevel = 100 -- oxygenlevel
+        oxygenLevel = Config.OxygenLevel -- oxygenlevel
         exports.qbx_core:Notify(Lang:t("success.tube_filled"), 'success')
         TriggerServerEvent('qb-diving:server:removeItemAfterFill')
         return
@@ -349,9 +349,9 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
             TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
             CreateThread(function()
                 while currentGear.enabled do
-                    if IsPedSwimmingUnderWater(cache.ped) then
+                    if IsPedSwimmingUnderWater(cache.ped) and oxygenLevel > 0 then
                         oxygenLevel -= 1
-                        if oxygenLevel % 10 == 0 and oxygenLevel ~= 100 then
+                        if oxygenLevel % 10 == 0 and oxygenLevel ~= Config.OxygenLevel then
                             TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
                         elseif oxygenLevel == 0 then
                             SetEnableScuba(cache.ped, false)
