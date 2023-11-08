@@ -194,7 +194,7 @@ local function createSeller()
             lib.zones.box({
                 coords = current.coords.xyz,
                 rotation = current.coords.w,
-                size = vec3(current.zoneOptions.length, current.zoneOptions.width, 3),
+                size = current.zoneDimensions,
                 onEnter = function()
                     lib.showTextUI(Lang:t("info.sell_coral_dt"))
                 end,

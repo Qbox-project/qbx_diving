@@ -217,11 +217,8 @@ Config.PriceModifiers = {
 }
 Config.SellLocations = {
     {
-        coords = vector4(-1684.13, -1068.91, 13.15, 100.0),
+        coords = vec4(-1684.13, -1068.91, 13.15, 100.0),
         model = 'a_m_m_salton_01',
-        zoneOptions = { -- Only used when not using the target
-            length = 3,
-            width = 3
-        }
+        zoneDimensions = vec3(3, 3, 3), -- Only used when not using the target
     }
 }
