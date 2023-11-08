@@ -7,13 +7,7 @@ local coralZones = {}
 ---@type table<integer, number> coralIndex to zoneId
 local coralTargetZones = {}
 
-local currentDivingLocation = {
-    area = 0,
-    blip = {
-        radius = nil,
-        label = nil
-    }
-}
+local blips = {}
 
 -- Functions
 local function callCops()
@@ -33,7 +27,7 @@ local function takeCoral(coralIndex)
 
     if lib.progressBar({
         duration = times * 1000,
-        label = Lang:t("info.collecting_coral"),
+        label = Lang:t('info.collecting_coral'),
         canCancel = true,
         useWhileDead = false,
         disable = {
@@ -43,13 +37,13 @@ local function takeCoral(coralIndex)
             combat = true
         },
         anim = {
-            dict = "weapons@first_person@aim_rng@generic@projectile@thermal_charge@",
-            clip = "plant_floor",
+            dict = 'weapons@first_person@aim_rng@generic@projectile@thermal_charge@',
+            clip = 'plant_floor',
             flag = 16
         }
     }) then
         TriggerEvent('qbx_diving:client:coralTaken', coralIndex)
-        TriggerServerEvent('qb-diving:server:TakeCoral', currentDivingLocation.area, coralIndex)
+        TriggerServerEvent('qbx_diving:server:takeCoral', coralIndex)
     end
 
     ClearPedTasks(cache.ped)
@@ -69,11 +63,13 @@ local function clearCoralZones()
 end
 
 local function clearAreaBlips()
-    for _, blip in pairs(currentDivingLocation.blip) do
+    for i = 1, #blips do
+        local blip = blips[i]
         if blip and DoesBlipExist(blip) then
             RemoveBlip(blip)
         end
     end
+    blips = {}
 end
 
 local function createAreaBlips(area)
@@ -89,10 +85,10 @@ local function createAreaBlips(area)
     SetBlipColour(labelBlip, 0)
     SetBlipAsShortRange(labelBlip, true)
     BeginTextCommandSetBlipName('STRING')
-    AddTextComponentSubstringPlayerName(Lang:t("info.diving_area"))
+    AddTextComponentSubstringPlayerName(Lang:t('info.diving_area'))
     EndTextCommandSetBlipName(labelBlip)
 
-    return radiusBlip, labelBlip
+    return {radiusBlip, labelBlip}
 end
 
 local function createCoralZone(coralIndex, coral)
@@ -104,7 +100,7 @@ local function createCoralZone(coralIndex, coral)
             debug = Config.Debug,
             options = {
                 {
-                    label = Lang:t("info.collect_coral"),
+                    label = Lang:t('info.collect_coral'),
                     icon = 'fa-solid fa-water',
                     onSelect = function()
                         takeCoral(coralIndex)
@@ -119,7 +115,7 @@ local function createCoralZone(coralIndex, coral)
             size = coral.boxDimensions.xyz,
             debug = Config.Debug,
             onEnter = function()
-                lib.showTextUI(Lang:t("info.collect_coral_dt"))
+                lib.showTextUI(Lang:t('info.collect_coral_dt'))
             end,
             onExit = function()
                 lib.hideTextUI()
@@ -146,31 +142,24 @@ local function setDivingLocation(areaIndex, pickedUpCoralIndexes)
     clearCoralZones()
     createCoralZones(areaIndex, pickedUpCoralIndexes)
 
-    currentDivingLocation.area = areaIndex
-
     clearAreaBlips()
-    local radiusBlip, labelBlip = createAreaBlips()
-    currentDivingLocation.blip.radius = radiusBlip
-    currentDivingLocation.blip.label = labelBlip
+    blips = createAreaBlips()
 end
 
 local function sellCoral()
-    LocalPlayer.state:set("invBusy", true, true)
-    TaskStartScenarioInPlace(cache.ped, "WORLD_HUMAN_STAND_IMPATIENT", 0, true)
-
     if lib.progressBar({
         duration = math.random(2000, 4000),
-        label = Lang:t("info.checking_pockets"),
+        label = Lang:t('info.checking_pockets'),
         useWhileDead = false,
-        canCancel = true
+        canCancel = true,
+        anim = {
+            scenario = 'WORLD_HUMAN_STAND_IMPATIENT'
+        }
     }) then
-        TriggerServerEvent('qb-diving:server:SellCoral')
+        TriggerServerEvent('qbx_diving:server:sellCoral')
     else
-        exports.qbx_core:Notify(Lang:t("error.canceled"), "error")
+        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
-
-    ClearPedTasks(cache.ped)
-    LocalPlayer.state:set("invBusy", false, true)
 end
 
 local function createSeller()
@@ -185,7 +174,7 @@ local function createSeller()
         if Config.UseTarget then
             exports.ox_target:addLocalEntity(ped, {
                 {
-                    label = Lang:t("info.sell_coral"),
+                    label = Lang:t('info.sell_coral'),
                     icon = 'fa-solid fa-dollar-sign',
                     onSelect = sellCoral,
                 }
@@ -197,7 +186,7 @@ local function createSeller()
                 size = current.zoneDimensions,
                 debug = Config.Debug,
                 onEnter = function()
-                    lib.showTextUI(Lang:t("info.sell_coral_dt"))
+                    lib.showTextUI(Lang:t('info.sell_coral_dt'))
                 end,
                 onExit = function()
                     lib.hideTextUI()
@@ -245,8 +234,8 @@ RegisterNetEvent('qbx_diving:client:coralTaken', function(coralIndex)
 end)
 
 RegisterNetEvent('qb-diving:client:CallCops', function(coords, msg)
-    PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", false, 0, true)
-    TriggerEvent("chatMessage", Lang:t("error.911_chatmessage"), "error", msg)
+    PlaySound(-1, 'Lose_1st', 'GTAO_FM_Events_Soundset', false, 0, true)
+    TriggerEvent('chatMessage', Lang:t('error.911_chatmessage'), 'error', msg)
     local transG = 100
     local blip = AddBlipForRadius(coords.x, coords.y, coords.z, 100.0)
     SetBlipSprite(blip, 9)
@@ -254,7 +243,7 @@ RegisterNetEvent('qb-diving:client:CallCops', function(coords, msg)
     SetBlipAlpha(blip, transG)
     SetBlipAsShortRange(blip, false)
     BeginTextCommandSetBlipName('STRING')
-    AddTextComponentString(Lang:t("info.blip_text"))
+    AddTextComponentString(Lang:t('info.blip_text'))
     EndTextCommandSetBlipName(blip)
 
     repeat
