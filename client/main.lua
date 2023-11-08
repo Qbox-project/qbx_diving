@@ -9,19 +9,7 @@ local coralTargetZones = {}
 
 local blips = {}
 
--- Functions
-local function callCops()
-    local call = math.random(1, 3)
-    local chance = math.random(1, 3)
-    local coords = GetEntityCoords(cache.ped)
-    if call ~= chance then return end
-
-    TriggerServerEvent('qb-diving:server:CallCops', coords)
-end
-
 local function takeCoral(coralIndex)
-    if math.random() > Config.CopsChance then callCops() end
-
     local times = math.random(2, 5)
     FreezeEntityPosition(cache.ped, true)
 
@@ -231,29 +219,6 @@ RegisterNetEvent('qbx_diving:client:coralTaken', function(coralIndex)
         exports.ox_target:removeZone(coralTargetZones[coralIndex])
         coralTargetZones[coralIndex] = nil
     end
-end)
-
-RegisterNetEvent('qb-diving:client:CallCops', function(coords, msg)
-    PlaySound(-1, 'Lose_1st', 'GTAO_FM_Events_Soundset', false, 0, true)
-    TriggerEvent('chatMessage', Lang:t('error.911_chatmessage'), 'error', msg)
-    local transG = 100
-    local blip = AddBlipForRadius(coords.x, coords.y, coords.z, 100.0)
-    SetBlipSprite(blip, 9)
-    SetBlipColour(blip, 1)
-    SetBlipAlpha(blip, transG)
-    SetBlipAsShortRange(blip, false)
-    BeginTextCommandSetBlipName('STRING')
-    AddTextComponentString(Lang:t('info.blip_text'))
-    EndTextCommandSetBlipName(blip)
-
-    repeat
-        Wait(180 * 4)
-        transG -= 1
-        SetBlipAlpha(blip, transG)
-    until transG == 0
-
-    SetBlipSprite(blip, 2)
-    RemoveBlip(blip)
 end)
 
 CreateThread(function()
