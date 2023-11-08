@@ -70,11 +70,11 @@ RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coral, bool)
     local amount = math.random(1, coralType.maxAmount)
 
     exports.ox_inventory:AddItem(src, coralType.item, amount)
-    if Config.CoralLocations[area].TotalCoral - 1 == 0 then
-        for _, v in pairs(Config.CoralLocations[currentDivingArea].coords.Coral) do
+    if Config.CoralLocations[area].maxHarvestAmount - 1 == 0 then
+        for _, v in pairs(Config.CoralLocations[currentDivingArea].corals) do
             v.PickedUp = false
         end
-        Config.CoralLocations[currentDivingArea].TotalCoral = #Config.CoralLocations[currentDivingArea].coords.Coral
+        Config.CoralLocations[currentDivingArea].maxHarvestAmount = #Config.CoralLocations[currentDivingArea].corals
         local newLocation = math.random(1, #Config.CoralLocations)
         while newLocation == currentDivingArea do
             newLocation = math.random(1, #Config.CoralLocations)
@@ -82,8 +82,8 @@ RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coral, bool)
         currentDivingArea = newLocation
         TriggerClientEvent('qb-diving:client:NewLocations', -1)
     else
-        Config.CoralLocations[area].coords.Coral[coral].PickedUp = bool
-        Config.CoralLocations[area].TotalCoral -= 1
+        Config.CoralLocations[area].corals[coral].PickedUp = bool
+        Config.CoralLocations[area].maxHarvestAmount -= 1
     end
 
     TriggerClientEvent('qb-diving:client:UpdateCoral', -1, area, coral, bool)

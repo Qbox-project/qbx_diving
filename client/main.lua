@@ -43,7 +43,7 @@ local function deleteGear()
 end
 
 local function takeCoral(coral)
-    if Config.CoralLocations[currentDivingLocation.area].coords.Coral[coral].PickedUp then return end
+    if Config.CoralLocations[currentDivingLocation.area].corals[coral].PickedUp then return end
 
     if math.random() > Config.CopsChance then callCops() end
 
@@ -67,7 +67,7 @@ local function takeCoral(coral)
             flag = 16
         }
     }) then
-        Config.CoralLocations[currentDivingLocation.area].coords.Coral[coral].PickedUp = true
+        Config.CoralLocations[currentDivingLocation.area].corals[coral].PickedUp = true
         TriggerServerEvent('qb-diving:server:TakeCoral', currentDivingLocation.area, coral, true)
     end
 
@@ -98,7 +98,7 @@ local function setDivingLocation(divingLocation)
         end
     end
 
-    local coords = Config.CoralLocations[currentDivingLocation.area].coords.Area
+    local coords = Config.CoralLocations[currentDivingLocation.area].blip
     local radiusBlip = AddBlipForRadius(coords.x, coords.y, coords.z, 100.0)
     SetBlipRotation(radiusBlip, 0)
     SetBlipColour(radiusBlip, 47)
@@ -114,12 +114,12 @@ local function setDivingLocation(divingLocation)
     AddTextComponentSubstringPlayerName(Lang:t("info.diving_area"))
     EndTextCommandSetBlipName(labelBlip)
     currentDivingLocation.blip.label = labelBlip
-    for k, v in pairs(Config.CoralLocations[currentDivingLocation.area].coords.Coral) do
+    for k, v in pairs(Config.CoralLocations[currentDivingLocation.area].corals) do
         if Config.UseTarget then
             coralTargetZones[#coralTargetZones] = exports.ox_target:addBoxZone({
                 coords = v.coords,
-                rotation = v.heading,
-                size = vec3(v.length, v.width, 5),
+                rotation = v.boxDimensions.w,
+                size = v.boxDimensions.xyz,
                 options = {
                     {
                         label = Lang:t("info.collect_coral"),
@@ -133,8 +133,8 @@ local function setDivingLocation(divingLocation)
         else
             coralZones[#coralZones + 1] = lib.zones.box({
                 coords = v.coords,
-                rotation = v.heading,
-                size = vec3(v.length, v.width, 5),
+                rotation = v.boxDimensions.w,
+                size = v.boxDimensions.xyz,
                 onEnter = function()
                     currentArea = k
                     lib.showTextUI(Lang:t("info.collect_coral_dt"))
@@ -246,7 +246,7 @@ RegisterNetEvent('qb-diving:client:NewLocations', function()
 end)
 
 RegisterNetEvent('qb-diving:client:UpdateCoral', function(area, coral, bool)
-    Config.CoralLocations[area].coords.Coral[coral].PickedUp = bool
+    Config.CoralLocations[area].corals[coral].PickedUp = bool
 end)
 
 RegisterNetEvent('qb-diving:client:CallCops', function(coords, msg)
