@@ -120,6 +120,7 @@ local function setDivingLocation(divingLocation)
                 coords = v.coords,
                 rotation = v.boxDimensions.w,
                 size = v.boxDimensions.xyz,
+                debug = Config.Debug,
                 options = {
                     {
                         label = Lang:t("info.collect_coral"),
@@ -135,6 +136,7 @@ local function setDivingLocation(divingLocation)
                 coords = v.coords,
                 rotation = v.boxDimensions.w,
                 size = v.boxDimensions.xyz,
+                debug = Config.Debug,
                 onEnter = function()
                     currentArea = k
                     lib.showTextUI(Lang:t("info.collect_coral_dt"))
@@ -195,6 +197,7 @@ local function createSeller()
                 coords = current.coords.xyz,
                 rotation = current.coords.w,
                 size = current.zoneDimensions,
+                debug = Config.Debug,
                 onEnter = function()
                     lib.showTextUI(Lang:t("info.sell_coral_dt"))
                 end,
