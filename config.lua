@@ -4,7 +4,6 @@ Config.CopsChance = 0.5 -- The chance of the cops getting called when a coral ge
 Config.OxygenLevel = 100 -- in seconds 
 Config.CoralLocations = {
     {
-        label = "This is Location 1",
         coords = {
             Area = vec3(-2838.8, -376.1, 3.55),
             Coral = {
@@ -41,7 +40,6 @@ Config.CoralLocations = {
         TotalCoral = 4,
     },
     {
-        label = "Location 2",
         coords = {
             Area = vec3(-3288.2, -67.58, 2.79),
             Coral = {
@@ -71,7 +69,6 @@ Config.CoralLocations = {
         TotalCoral = 3,
     },
     {
-        label = "Location 3",
         coords = {
             Area = vec3(-3367.24, 1617.89, 1.39),
             Coral = {
@@ -101,7 +98,6 @@ Config.CoralLocations = {
         TotalCoral = 3,
     },
     {
-        label = "Location 4",
         coords = {
             Area = vec3(3002.5, -1538.28, -27.36),
             Coral = {
@@ -131,7 +127,6 @@ Config.CoralLocations = {
         TotalCoral = 3,
     },
     {
-        label = "Location 5",
         coords = {
             Area = vec3(3421.58, 1975.68, 0.86),
             Coral = {
@@ -168,7 +163,6 @@ Config.CoralLocations = {
         TotalCoral = 4,
     },
     {
-        label = "Location 6",
         coords = {
             Area = vec3(2720.14, -2136.28, 0.74),
             Coral = {
@@ -205,7 +199,6 @@ Config.CoralLocations = {
         TotalCoral = 4,
     },
     {
-        label = "Location 7",
         coords = {
             Area = vec3(536.69, 7253.75, 1.69),
             Coral = {
