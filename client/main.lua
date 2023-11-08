@@ -1,7 +1,12 @@
 local isLoggedIn = LocalPlayer.state.isLoggedIn
+
+---@diagnostic disable-next-line: undefined-doc-name
+---@type table<integer, CZone> coralIndex to ox_lib zone
 local coralZones = {}
+
+---@type table<integer, number> coralIndex to zoneId
 local coralTargetZones = {}
-local currentArea = 0
+
 local isWearingSuit = false
 local oxygenLevel = 0
 local currentDivingLocation = {
@@ -42,9 +47,7 @@ local function deleteGear()
 	end
 end
 
-local function takeCoral(coral)
-    if Config.CoralLocations[currentDivingLocation.area].corals[coral].PickedUp then return end
-
+local function takeCoral(coralIndex)
     if math.random() > Config.CopsChance then callCops() end
 
     local times = math.random(2, 5)
@@ -67,42 +70,39 @@ local function takeCoral(coral)
             flag = 16
         }
     }) then
-        Config.CoralLocations[currentDivingLocation.area].corals[coral].PickedUp = true
-        TriggerServerEvent('qb-diving:server:TakeCoral', currentDivingLocation.area, coral)
+        TriggerEvent('qbx_diving:client:coralTaken', coralIndex)
+        TriggerServerEvent('qb-diving:server:TakeCoral', currentDivingLocation.area, coralIndex)
     end
 
     ClearPedTasks(cache.ped)
     FreezeEntityPosition(cache.ped, false)
 end
 
-local function setDivingLocation(divingLocation)
-    if currentDivingLocation.area ~= 0 then
-        if Config.UseTarget then
-            for i = 1, #coralTargetZones do
-                exports.ox_target:removeZone(coralTargetZones[i])
-            end
-            coralTargetZones = {}
-        else
-            for i = 1, #coralZones do
-                coralZones[i]:remove()
-            end
-            coralZones = {}
-        end
+local function clearCoralZones()
+    for _, zoneId in pairs(coralTargetZones) do
+        exports.ox_target:removeZone(zoneId)
     end
+    coralTargetZones = {}
+    for _, zone in pairs(coralZones) do
+        ---@diagnostic disable-next-line: undefined-field
+        zone:remove()
+    end
+    coralZones = {}
+end
 
-    currentDivingLocation.area = divingLocation
-
+local function clearAreaBlips()
     for _, blip in pairs(currentDivingLocation.blip) do
         if blip and DoesBlipExist(blip) then
             RemoveBlip(blip)
         end
     end
+end
 
-    local coords = Config.CoralLocations[currentDivingLocation.area].blip
+local function createAreaBlips(area)
+    local coords = Config.CoralLocations[area].blip
     local radiusBlip = AddBlipForRadius(coords.x, coords.y, coords.z, 100.0)
     SetBlipRotation(radiusBlip, 0)
     SetBlipColour(radiusBlip, 47)
-    currentDivingLocation.blip.radius = radiusBlip
 
     local labelBlip = AddBlipForCoord(coords.x, coords.y, coords.z)
     SetBlipSprite(labelBlip, 597)
@@ -113,47 +113,67 @@ local function setDivingLocation(divingLocation)
     BeginTextCommandSetBlipName('STRING')
     AddTextComponentSubstringPlayerName(Lang:t("info.diving_area"))
     EndTextCommandSetBlipName(labelBlip)
-    currentDivingLocation.blip.label = labelBlip
-    for k, v in pairs(Config.CoralLocations[currentDivingLocation.area].corals) do
-        if Config.UseTarget then
-            coralTargetZones[#coralTargetZones] = exports.ox_target:addBoxZone({
-                coords = v.coords,
-                rotation = v.boxDimensions.w,
-                size = v.boxDimensions.xyz,
-                debug = Config.Debug,
-                options = {
-                    {
-                        label = Lang:t("info.collect_coral"),
-                        icon = 'fa-solid fa-water',
-                        onSelect = function()
-                            takeCoral(k)
-                        end
-                    }
-                },
-            })
-        else
-            coralZones[#coralZones + 1] = lib.zones.box({
-                coords = v.coords,
-                rotation = v.boxDimensions.w,
-                size = v.boxDimensions.xyz,
-                debug = Config.Debug,
-                onEnter = function()
-                    currentArea = k
-                    lib.showTextUI(Lang:t("info.collect_coral_dt"))
-                end,
-                onExit = function()
-                    currentArea = 0
-                    lib.hideTextUI()
-                end,
-                inside = function()
-                    if IsControlJustPressed(0, 51) then -- E
-                        takeCoral(currentArea)
-                        lib.hideTextUI()
+
+    return radiusBlip, labelBlip
+end
+
+local function createCoralZone(coralIndex, coral)
+    if Config.UseTarget then
+        coralTargetZones[coralIndex] = exports.ox_target:addBoxZone({
+            coords = coral.coords,
+            rotation = coral.boxDimensions.w,
+            size = coral.boxDimensions.xyz,
+            debug = Config.Debug,
+            options = {
+                {
+                    label = Lang:t("info.collect_coral"),
+                    icon = 'fa-solid fa-water',
+                    onSelect = function()
+                        takeCoral(coralIndex)
                     end
+                }
+            },
+        })
+    else
+        coralZones[coralIndex] = lib.zones.box({
+            coords = coral.coords,
+            rotation = coral.boxDimensions.w,
+            size = coral.boxDimensions.xyz,
+            debug = Config.Debug,
+            onEnter = function()
+                lib.showTextUI(Lang:t("info.collect_coral_dt"))
+            end,
+            onExit = function()
+                lib.hideTextUI()
+            end,
+            inside = function()
+                if IsControlJustPressed(0, 51) then -- E
+                    takeCoral(coralIndex)
+                    lib.hideTextUI()
                 end
-            })
+            end
+        })
+    end
+end
+
+local function createCoralZones(areaIndex, ignoredCoralIndexes)
+    for coralIndex, coral in pairs(Config.CoralLocations[areaIndex].corals) do
+        if not ignoredCoralIndexes[coralIndex] then
+            createCoralZone(coralIndex, coral)
         end
     end
+end
+
+local function setDivingLocation(areaIndex, pickedUpCoralIndexes)
+    clearCoralZones()
+    createCoralZones(areaIndex, pickedUpCoralIndexes)
+
+    currentDivingLocation.area = areaIndex
+
+    clearAreaBlips()
+    local radiusBlip, labelBlip = createAreaBlips()
+    currentDivingLocation.blip.radius = radiusBlip
+    currentDivingLocation.blip.label = labelBlip
 end
 
 local function sellCoral()
@@ -228,29 +248,35 @@ local function DrawText(text)
     EndTextCommandDisplayText(0.45, 0.90)
 end
 
--- Events
+local function init()
+    local areaIndex, pickedUpCoralIndexes = lib.callback.await('qbx_diving:server:getCurrentDivingArea', false)
+    setDivingLocation(areaIndex, pickedUpCoralIndexes)
+    createSeller()
+end
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    local config, area = lib.callback.await('qb-diving:server:GetDivingConfig', false)
-    Config.CoralLocations = config
-    setDivingLocation(area)
-    createSeller()
     isLoggedIn = true
+    init()
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     isLoggedIn = false
 end)
 
-RegisterNetEvent('qb-diving:client:NewLocations', function()
-    local config, area = lib.callback.await('qb-diving:server:GetDivingConfig', false)
-    Config.CoralLocations = config
-    setDivingLocation(area)
+RegisterNetEvent('qbx_diving:client:newLocationSet', function(areaIndex)
+    setDivingLocation(areaIndex, {})
 end)
 
-RegisterNetEvent('qbx_diving:client:coralTaken', function(area, coralIndex)
-    --- TODO: remove zone at area, and coralIndex
-    Config.CoralLocations[area].corals[coralIndex].PickedUp = true
+RegisterNetEvent('qbx_diving:client:coralTaken', function(coralIndex)
+    if coralZones[coralIndex] then
+        ---@diagnostic disable-next-line: undefined-field
+        coralZones[coralIndex]:remove()
+        coralZones[coralIndex] = nil
+    end
+    if coralTargetZones[coralIndex] then
+        exports.ox_target:removeZone(coralTargetZones[coralIndex])
+        coralTargetZones[coralIndex] = nil
+    end
 end)
 
 RegisterNetEvent('qb-diving:client:CallCops', function(coords, msg)
@@ -375,10 +401,7 @@ end)
 
 CreateThread(function()
     if not isLoggedIn then return end
-    local config, area = lib.callback.await('qb-diving:server:GetDivingConfig', false)
-    Config.CoralLocations = config
-    setDivingLocation(area)
-    createSeller()
+    init()
 end)
 
 CreateThread(function()

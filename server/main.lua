@@ -1,7 +1,6 @@
 local currentDivingArea = math.random(1, #Config.CoralLocations)
 
---- Maybe table<integer, boolean>
----@type integer[]
+---@type table<integer, true> Set of coralIndex
 local pickedUpCoralIndexes = {}
 
 local function getItemPrice(amount, price)
@@ -71,34 +70,35 @@ local function getNewLocation()
     local newLocation
     repeat
         newLocation = math.random(1, #Config.CoralLocations)
-    until newLocation ~= currentDivingArea
+    until newLocation ~= currentDivingArea or #Config.CoralLocations == 1
     return newLocation
 end
 
---- TODO: do not modify Config
 RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coralIndex)
+    if pickedUpCoralIndexes[coralIndex] then return end
     local src = source
     local coralType = Config.CoralTypes[math.random(1, #Config.CoralTypes)]
     local amount = math.random(1, coralType.maxAmount)
 
     exports.ox_inventory:AddItem(src, coralType.item, amount)
-    pickedUpCoralIndexes[#pickedUpCoralIndexes+1] = coralIndex
+    pickedUpCoralIndexes[coralIndex] = true
     if #pickedUpCoralIndexes == Config.CoralLocations[area].maxHarvestAmount then
         pickedUpCoralIndexes = {}
         currentDivingArea = getNewLocation()
-        TriggerClientEvent('qb-diving:client:NewLocations', -1)
+        TriggerClientEvent('qbx_diving:client:newLocationSet', -1, currentDivingArea)
     end
 
-    TriggerClientEvent('qbx_diving:client:coralTaken', -1, area, coralIndex)
+    TriggerClientEvent('qbx_diving:client:coralTaken', -1, coralIndex)
 end)
 
 RegisterNetEvent('qb-diving:server:removeItemAfterFill', function()
     exports.ox_inventory:RemoveItem(source, 'diving_fill', 1)
 end)
 
---- TODO: config should be static. Client shouldn't need a config update
-lib.callback.register('qb-diving:server:GetDivingConfig', function()
-    return Config.CoralLocations, currentDivingArea
+---@return integer areaIndex
+---@return table<integer, true> pickedUpCoralIndexes
+lib.callback.register('qbx_diving:server:getCurrentDivingArea', function()
+    return currentDivingArea, pickedUpCoralIndexes
 end)
 
 exports.qbx_core:CreateUseableItem("diving_gear", function(source)
