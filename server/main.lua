@@ -34,21 +34,6 @@ local function getCoralInInventory(src)
     return availableCoral
 end
 
-RegisterNetEvent('qb-diving:server:CallCops', function(coords)
-    for _, player in pairs(exports.qbx_core:GetQBPlayers()) do
-        if player.PlayerData.job.type == 'leo' and player.PlayerData.job.onduty then
-            local msg = Lang:t("info.cop_msg")
-            TriggerClientEvent('qb-diving:client:CallCops', player.PlayerData.source, coords, msg)
-            local alertData = {
-                title = Lang:t("info.cop_title"),
-                coords = coords,
-                description = msg
-            }
-            TriggerClientEvent("qb-phone:client:addPoliceAlert", -1, alertData)
-        end
-    end
-end)
-
 RegisterNetEvent('qbx_diving:server:sellCoral', function()
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
@@ -83,6 +68,7 @@ RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
     exports.ox_inventory:AddItem(src, coralType.item, amount)
     pickedUpCoralIndexes[coralIndex] = true
     TriggerClientEvent('qbx_diving:client:coralTaken', -1, coralIndex)
+    TriggerEvent('qbx_diving:server:coralTaken', Config.CoralLocations[currentAreaIndex].corals[coralIndex].coords)
     if #pickedUpCoralIndexes == Config.CoralLocations[currentAreaIndex].maxHarvestAmount then
         pickedUpCoralIndexes = {}
         currentAreaIndex = getNewLocation()
