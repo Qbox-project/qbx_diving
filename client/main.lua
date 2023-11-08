@@ -68,7 +68,7 @@ local function takeCoral(coral)
         }
     }) then
         Config.CoralLocations[currentDivingLocation.area].corals[coral].PickedUp = true
-        TriggerServerEvent('qb-diving:server:TakeCoral', currentDivingLocation.area, coral, true)
+        TriggerServerEvent('qb-diving:server:TakeCoral', currentDivingLocation.area, coral)
     end
 
     ClearPedTasks(cache.ped)
@@ -248,8 +248,9 @@ RegisterNetEvent('qb-diving:client:NewLocations', function()
     setDivingLocation(area)
 end)
 
-RegisterNetEvent('qb-diving:client:UpdateCoral', function(area, coral, bool)
-    Config.CoralLocations[area].corals[coral].PickedUp = bool
+RegisterNetEvent('qbx_diving:client:coralTaken', function(area, coralIndex)
+    --- TODO: remove zone at area, and coralIndex
+    Config.CoralLocations[area].corals[coralIndex].PickedUp = true
 end)
 
 RegisterNetEvent('qb-diving:client:CallCops', function(coords, msg)

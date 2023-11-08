@@ -1,5 +1,9 @@
 local currentDivingArea = math.random(1, #Config.CoralLocations)
 
+--- Maybe table<integer, boolean>
+---@type integer[]
+local pickedUpCoralIndexes = {}
+
 local function getItemPrice(amount, price)
     for i = 1, #Config.PriceModifiers do
         local modifier = Config.PriceModifiers[i]
@@ -63,30 +67,29 @@ RegisterNetEvent('qb-diving:server:SellCoral', function()
     end
 end)
 
+local function getNewLocation()
+    local newLocation
+    repeat
+        newLocation = math.random(1, #Config.CoralLocations)
+    until newLocation ~= currentDivingArea
+    return newLocation
+end
+
 --- TODO: do not modify Config
-RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coral, bool)
+RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coralIndex)
     local src = source
     local coralType = Config.CoralTypes[math.random(1, #Config.CoralTypes)]
     local amount = math.random(1, coralType.maxAmount)
 
     exports.ox_inventory:AddItem(src, coralType.item, amount)
-    if Config.CoralLocations[area].maxHarvestAmount - 1 == 0 then
-        for _, v in pairs(Config.CoralLocations[currentDivingArea].corals) do
-            v.PickedUp = false
-        end
-        Config.CoralLocations[currentDivingArea].maxHarvestAmount = #Config.CoralLocations[currentDivingArea].corals
-        local newLocation = math.random(1, #Config.CoralLocations)
-        while newLocation == currentDivingArea do
-            newLocation = math.random(1, #Config.CoralLocations)
-        end
-        currentDivingArea = newLocation
+    pickedUpCoralIndexes[#pickedUpCoralIndexes+1] = coralIndex
+    if #pickedUpCoralIndexes == Config.CoralLocations[area].maxHarvestAmount then
+        pickedUpCoralIndexes = {}
+        currentDivingArea = getNewLocation()
         TriggerClientEvent('qb-diving:client:NewLocations', -1)
-    else
-        Config.CoralLocations[area].corals[coral].PickedUp = bool
-        Config.CoralLocations[area].maxHarvestAmount -= 1
     end
 
-    TriggerClientEvent('qb-diving:client:UpdateCoral', -1, area, coral, bool)
+    TriggerClientEvent('qbx_diving:client:coralTaken', -1, area, coralIndex)
 end)
 
 RegisterNetEvent('qb-diving:server:removeItemAfterFill', function()
