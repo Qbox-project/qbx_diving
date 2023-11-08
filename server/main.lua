@@ -82,29 +82,16 @@ RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coralIndex)
 
     exports.ox_inventory:AddItem(src, coralType.item, amount)
     pickedUpCoralIndexes[coralIndex] = true
+    TriggerClientEvent('qbx_diving:client:coralTaken', -1, coralIndex)
     if #pickedUpCoralIndexes == Config.CoralLocations[area].maxHarvestAmount then
         pickedUpCoralIndexes = {}
         currentDivingArea = getNewLocation()
         TriggerClientEvent('qbx_diving:client:newLocationSet', -1, currentDivingArea)
     end
-
-    TriggerClientEvent('qbx_diving:client:coralTaken', -1, coralIndex)
-end)
-
-RegisterNetEvent('qb-diving:server:removeItemAfterFill', function()
-    exports.ox_inventory:RemoveItem(source, 'diving_fill', 1)
 end)
 
 ---@return integer areaIndex
 ---@return table<integer, true> pickedUpCoralIndexes
 lib.callback.register('qbx_diving:server:getCurrentDivingArea', function()
     return currentDivingArea, pickedUpCoralIndexes
-end)
-
-exports.qbx_core:CreateUseableItem("diving_gear", function(source)
-    TriggerClientEvent("qb-diving:client:UseGear", source)
-end)
-
-exports.qbx_core:CreateUseableItem("diving_fill", function(source)
-    TriggerClientEvent("qb-diving:client:setoxygenlevel", source)
 end)
