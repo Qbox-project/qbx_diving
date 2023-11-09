@@ -1,7 +1,6 @@
 local Translations = {
     error = {
         canceled = "Canceled",
-        ["911_chatmessage"] = "911 MESSAGE",
         no_coral = "You don't have any coral to sell...",
     },
     info = {
@@ -12,9 +11,6 @@ local Translations = {
         checking_pockets = "Checking Inventory for Coral to Sell...",
         sell_coral = "Sell Coral",
         sell_coral_dt = "[E] - Sell Coral",
-        blip_text = "911 - Dive Site",
-        cop_msg = "This coral looks freshly stolen...",
-        cop_title = "Illegal Diving",
     },
 }
 
