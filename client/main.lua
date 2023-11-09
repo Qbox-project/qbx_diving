@@ -11,8 +11,6 @@ local blips = {}
 
 local function takeCoral(coralIndex)
     local times = math.random(2, 5)
-    FreezeEntityPosition(cache.ped, true)
-
     if lib.progressBar({
         duration = times * 1000,
         label = Lang:t('info.collecting_coral'),
@@ -33,9 +31,6 @@ local function takeCoral(coralIndex)
         TriggerEvent('qbx_diving:client:coralTaken', coralIndex)
         TriggerServerEvent('qbx_diving:server:takeCoral', coralIndex)
     end
-
-    ClearPedTasks(cache.ped)
-    FreezeEntityPosition(cache.ped, false)
 end
 
 local function clearCoralZones()
@@ -60,8 +55,8 @@ local function clearAreaBlips()
     blips = {}
 end
 
-local function createAreaBlips(area)
-    local coords = Config.CoralLocations[area].blip
+local function createAreaBlips(areaIndex)
+    local coords = Config.CoralLocations[areaIndex].blip
     local radiusBlip = AddBlipForRadius(coords.x, coords.y, coords.z, 100.0)
     SetBlipRotation(radiusBlip, 0)
     SetBlipColour(radiusBlip, 47)
@@ -131,7 +126,7 @@ local function setDivingLocation(areaIndex, pickedUpCoralIndexes)
     createCoralZones(areaIndex, pickedUpCoralIndexes)
 
     clearAreaBlips()
-    blips = createAreaBlips()
+    blips = createAreaBlips(areaIndex)
 end
 
 local function sellCoral()
