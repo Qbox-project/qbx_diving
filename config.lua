@@ -1,6 +1,6 @@
 Config = {}
 Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- Use qb-target interactions (don't change this, go to your server.cfg and add `setr UseTarget true` to use this and just that from true to false or the other way around)
-Config.Debug = true -- shows outline of box zones
+Config.Debug = false -- shows outline of box zones
 
 ---@class Coral
 ---@field coords vector3
