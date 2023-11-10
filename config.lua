@@ -18,7 +18,7 @@ Config.CoralLocations = {
         blip = vec3(4136.99, 3532.76, -26.21),
         corals = {
             {
-                coords = vec3(4139.14, 3519.901, -39.200806), 
+                coords = vec3(4139.14, 3519.901, -39.200806),
                 boxDimensions = vec4(3, 3, 5, 100.0),
             },
             {
@@ -89,7 +89,7 @@ Config.CoralLocations = {
     },
     -- Group 3 East of Shipping docks
     {
-        blip = vec3(1795.41, -3000.04, -39.97),  
+        blip = vec3(1795.41, -3000.04, -39.97),
         corals = {
             {
                 coords = vec3(1864.6034, -2969.04, -43.647366),
@@ -139,7 +139,7 @@ Config.CoralLocations = {
     },
     -- Group 5 Del Perro 
     {
-        blip = vec3(-1888.94, -1125.72, -8.25), 
+        blip = vec3(-1888.94, -1125.72, -8.25),
         corals = {
             {
                 coords = vec3(-1876.6805, -1184.799, -17.84077),
@@ -268,7 +268,7 @@ Config.CoralLocations = {
     },
     -- Group 8 North Chumash Cove
     {
-        blip = vec3(-3222.98, 1936.27, -9.84), 
+        blip = vec3(-3222.98, 1936.27, -9.84),
         corals = {
             {
                 coords = vec3(-3257.7324, 1881.6226, -19.459412),
@@ -299,7 +299,7 @@ Config.CoralLocations = {
     },
     -- Group 9 Zancudo Offshore
     {
-        blip = vec3(-3179.26, 3040.16, -30.33), 
+        blip = vec3(-3179.26, 3040.16, -30.33),
         corals = {
             {
                 coords = vec3(-3177.6873, 3058.0007, -33.035675),
@@ -516,9 +516,9 @@ Config.CoralLocations = {
         },
         maxHarvestAmount = 12,
     },
-    -- Group 14 Paleto Off Shore
+    -- Group 14 Paleto Off-Shore
     {
-        blip = vec3(-975.57, 6533.18, -23.45), 
+        blip = vec3(-975.57, 6533.18, -23.45),
         corals = {
             {
                 coords = vec3(-1038.793, 6603.9844, -28.737854),
@@ -611,9 +611,9 @@ Config.CoralLocations = {
         },
         maxHarvestAmount = 16,
     },
-    -- Group 15 Paleto Off Shore
+    -- Group 15 Paleto Off-Shore
     {
-        blip = vec3(-844.66, 6737.09, -29.0), 
+        blip = vec3(-844.66, 6737.09, -29.0),
         corals = {
             {
                 coords = vec3(-891.002, 6779.745, -49.468597),
@@ -654,7 +654,7 @@ Config.CoralLocations = {
         },
         maxHarvestAmount = 6,
     },
-    -- Group 16 Paleto Off Shore
+    -- Group 16 Paleto Off-Shore
     {
         blip = vec3(-887.83, 6564.11, -22.67),
         corals = {
@@ -689,7 +689,7 @@ Config.CoralLocations = {
         },
         maxHarvestAmount = 4,
     },
-    -- Group 17 Paleto Off Shore
+    -- Group 17 Paleto Off-Shore
     {
         blip = vec3(-706.95, 6647.61, -15.66),
         corals = {
