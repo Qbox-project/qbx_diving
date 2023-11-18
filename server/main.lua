@@ -1,12 +1,14 @@
-local currentAreaIndex = math.random(1, #Config.CoralLocations)
+local config = require 'config.server'
+local sharedConfig = require 'config.shared'
+local currentAreaIndex = math.random(1, #sharedConfig.coralLocations)
 
 ---@type table<integer, true> Set of coralIndex
 local pickedUpCoralIndexes = {}
 
 local function getItemPrice(amount, price)
-    for i = 1, #Config.PriceModifiers do
-        local modifier = Config.PriceModifiers[i]
-        local shouldModify = i == #Config.PriceModifiers and
+    for i = 1, #config.priceModifiers do
+        local modifier = config.priceModifiers[i]
+        local shouldModify = i == #config.priceModifiers and
             amount >= modifier.minAmount or
             amount >= modifier.minAmount and
             amount <= modifier.maxAmount
@@ -22,8 +24,8 @@ end
 local function getCoralInInventory(src)
     local availableCoral = {}
 
-    for i = 1, #Config.CoralTypes do
-        local coralType = Config.CoralTypes[i]
+    for i = 1, #config.coralTypes do
+        local coralType = config.coralTypes[i]
         
         local count = exports.ox_inventory:GetItemCount(src, coralType.item)
         if count then
@@ -39,7 +41,7 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
     local player = exports.qbx_core:GetPlayer(src)
     local availableCoral = getCoralInInventory(src)
     if #availableCoral == 0 then
-        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.no_coral"), 'error')
+        exports.qbx_core:Notify(src, Lang:t('error.no_coral'), 'error')
         return
     end
 
@@ -47,29 +49,29 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
         local price = amount * coral.price
         local reward = getItemPrice(amount, price)
         exports.ox_inventory:RemoveItem(src, coral.item, amount)
-        player.Functions.AddMoney('cash', math.ceil(reward / amount), "sold-coral")
+        player.Functions.AddMoney('cash', math.ceil(reward / amount), 'sold-coral')
     end
 end)
 
 local function getNewLocation()
     local newLocation
     repeat
-        newLocation = math.random(1, #Config.CoralLocations)
-    until newLocation ~= currentAreaIndex or #Config.CoralLocations == 1
+        newLocation = math.random(1, #sharedConfig.coralLocations)
+    until newLocation ~= currentAreaIndex or #sharedConfig.coralLocations == 1
     return newLocation
 end
 
 RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
     if pickedUpCoralIndexes[coralIndex] then return end
     local src = source
-    local coralType = Config.CoralTypes[math.random(1, #Config.CoralTypes)]
+    local coralType = config.coralTypes[math.random(1, #config.coralTypes)]
     local amount = math.random(1, coralType.maxAmount)
 
     exports.ox_inventory:AddItem(src, coralType.item, amount)
     pickedUpCoralIndexes[coralIndex] = true
     TriggerClientEvent('qbx_diving:client:coralTaken', -1, coralIndex)
-    TriggerEvent('qbx_diving:server:coralTaken', Config.CoralLocations[currentAreaIndex].corals[coralIndex].coords)
-    if #pickedUpCoralIndexes == Config.CoralLocations[currentAreaIndex].maxHarvestAmount then
+    TriggerEvent('qbx_diving:server:coralTaken', sharedConfig.coralLocations[currentAreaIndex].corals[coralIndex].coords)
+    if #pickedUpCoralIndexes == sharedConfig.coralLocations[currentAreaIndex].maxHarvestAmount then
         pickedUpCoralIndexes = {}
         currentAreaIndex = getNewLocation()
         TriggerClientEvent('qbx_diving:client:newLocationSet', -1, currentAreaIndex)

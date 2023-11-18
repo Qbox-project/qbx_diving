@@ -1,7 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'qbx_diving'
+description 'QBX_Diving'
+repository 'https://github.com/Qbox-project/qbx_diving'
 version '1.0.0'
 
 shared_script {
@@ -9,7 +10,6 @@ shared_script {
     '@qbx_core/shared/locale.lua',
     'locales/en.lua',
     'locales/*.lua',
-    'config.lua',
 }
 
 server_scripts {
@@ -18,6 +18,11 @@ server_scripts {
 
 client_scripts {
     'client/*'
+}
+
+files {
+    'config/client.lua',
+    'config/shared.lua',
 }
 
 lua54 'yes'

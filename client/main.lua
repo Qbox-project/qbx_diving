@@ -1,3 +1,5 @@
+local config = require 'config.client'
+local sharedConfig = require 'config.shared'
 local isLoggedIn = LocalPlayer.state.isLoggedIn
 
 ---@diagnostic disable-next-line: undefined-doc-name
@@ -56,7 +58,7 @@ local function clearAreaBlips()
 end
 
 local function createAreaBlips(areaIndex)
-    local coords = Config.CoralLocations[areaIndex].blip
+    local coords = sharedConfig.coralLocations[areaIndex].blip
     local radiusBlip = AddBlipForRadius(coords.x, coords.y, coords.z, 100.0)
     SetBlipRotation(radiusBlip, 0)
     SetBlipColour(radiusBlip, 47)
@@ -76,12 +78,12 @@ local function createAreaBlips(areaIndex)
 end
 
 local function createCoralZone(coralIndex, coral)
-    if Config.UseTarget then
+    if config.useTarget then
         coralTargetZones[coralIndex] = exports.ox_target:addBoxZone({
             coords = coral.coords,
             rotation = coral.boxDimensions.w,
             size = coral.boxDimensions.xyz,
-            debug = Config.Debug,
+            debug = config.debugPoly,
             options = {
                 {
                     label = Lang:t('info.collect_coral'),
@@ -97,7 +99,7 @@ local function createCoralZone(coralIndex, coral)
             coords = coral.coords,
             rotation = coral.boxDimensions.w,
             size = coral.boxDimensions.xyz,
-            debug = Config.Debug,
+            debug = config.debugPoly,
             onEnter = function()
                 lib.showTextUI(Lang:t('info.collect_coral_dt'))
             end,
@@ -115,7 +117,7 @@ local function createCoralZone(coralIndex, coral)
 end
 
 local function createCoralZones(areaIndex, ignoredCoralIndexes)
-    for coralIndex, coral in pairs(Config.CoralLocations[areaIndex].corals) do
+    for coralIndex, coral in pairs(sharedConfig.coralLocations[areaIndex].corals) do
         if not ignoredCoralIndexes[coralIndex] then
             createCoralZone(coralIndex, coral)
         end
@@ -147,15 +149,15 @@ local function sellCoral()
 end
 
 local function createSeller()
-    for _, current in pairs(Config.SellLocations) do
+    for _, current in pairs(config.sellLocations) do
         current.model = type(current.model) == 'string' and joaat(current.model) or current.model
         lib.requestModel(current.model)
-        local currentCoords = vector4(current.coords.x, current.coords.y, current.coords.z - 1, current.coords.w)
+        local currentCoords = vec4(current.coords.x, current.coords.y, current.coords.z - 1, current.coords.w)
         local ped = CreatePed(0, current.model, currentCoords.x, currentCoords.y, currentCoords.z, currentCoords.w, false, false)
         FreezeEntityPosition(ped, true)
         SetEntityInvincible(ped, true)
         SetBlockingOfNonTemporaryEvents(ped, true)
-        if Config.UseTarget then
+        if config.useTarget then
             exports.ox_target:addLocalEntity(ped, {
                 {
                     label = Lang:t('info.sell_coral'),
@@ -168,7 +170,7 @@ local function createSeller()
                 coords = current.coords.xyz,
                 rotation = current.coords.w,
                 size = current.zoneDimensions,
-                debug = Config.Debug,
+                debug = config.debugPoly,
                 onEnter = function()
                     lib.showTextUI(Lang:t('info.sell_coral_dt'))
                 end,
