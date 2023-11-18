@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'QBX_Diving'
+description 'qbx_diving'
 repository 'https://github.com/Qbox-project/qbx_diving'
 version '1.0.0'
 
