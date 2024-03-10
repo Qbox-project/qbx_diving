@@ -65,7 +65,7 @@ local function createAreaBlips(areaIndex)
     SetBlipAlpha(radiusBlip, 100)
 
     local labelBlip = AddBlipForCoord(coords.x, coords.y, coords.z)
-    SetBlipSprite(labelBlip, 597)
+    SetBlipSprite(labelBlip, 729)
     SetBlipDisplay(labelBlip, 4)
     SetBlipScale(labelBlip, 0.7)
     SetBlipColour(labelBlip, 0)
