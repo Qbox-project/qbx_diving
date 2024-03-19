@@ -1,5 +1,4 @@
-
-![image](https://github.com/alberttheprince/qbx_diving/assets/85725579/d6c057b4-3cce-4522-8166-754bb2d35f4f)
+![image-2](https://github.com/Qbox-project/qbx_diving/assets/3579092/7619ca8c-ba4e-4c55-a5ba-7d889473934e)
 
 # qbx_diving
 
@@ -43,14 +42,10 @@ Add the following items to your items.lua file if you don't have them already in
 
 # Images
 
-Collecting coral:
-
-![image](https://github.com/alberttheprince/qbx_diving/assets/85725579/32e8a3dc-2b94-4776-983c-2dbb02b05239)
-
 How debug zones appear when turned on:
 
-![image](https://github.com/alberttheprince/qbx_diving/assets/85725579/29199968-ab23-4d64-9018-7b675f88abba)
+![image-3](https://github.com/Qbox-project/qbx_diving/assets/3579092/2189e9ed-367a-4d88-9850-a5e80c152955)
 
 How the blip appears on the world map:
 
-![image](https://github.com/alberttheprince/qbx_diving/assets/85725579/200f7e93-5a96-4651-8e7f-17e169ed250a)
+![image-4](https://github.com/Qbox-project/qbx_diving/assets/3579092/b7fc3ccc-b694-4cfb-9b89-35964f1102f2)
