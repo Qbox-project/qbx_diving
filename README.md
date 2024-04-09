@@ -39,11 +39,6 @@ Add the following items to your items.lua file if you don't have them already in
         description = "Also known as a pillar coral."
     },
 ```
-# Ox-Lib Changes to make underwater targeting work
-
-in ox_lib/resource/interface/client/progress.lua line 43 comment out below
-
-`if not data.allowSwimming and IsPedSwimming(cache.ped) then return true end`
 
 # Images
 
