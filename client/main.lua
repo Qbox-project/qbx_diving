@@ -18,6 +18,7 @@ local function takeCoral(coralIndex)
         label = Lang:t('info.collecting_coral'),
         canCancel = true,
         useWhileDead = false,
+        allowSwimming = true,
         disable = {
             move = true,
             car = true,
