@@ -40,7 +40,7 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
     local availableCoral = getCoralInInventory(src)
-    if #availableCoral == 0 then
+    if availableCoral == 0 then -- removed the # as it was blocking the sell feature from working
         exports.qbx_core:Notify(src, Lang:t('error.no_coral'), 'error')
         return
     end
