@@ -21,17 +21,25 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
     if not player then return end
+    local corals = #config.coralTypes
 
-    for i = 1, #config.coralTypes do
+    for i = 1, corals do
         local coral = config.coralTypes[i]
         local count = exports.ox_inventory:GetItemCount(src, coral.item)
 
-        if count then
+        if count and count > 0 then
+            corals = corals - 1
             local price = count * coral.price
             local reward = getItemPrice(count, price)
             exports.ox_inventory:RemoveItem(src, coral.item, count)
             player.Functions.AddMoney('cash', math.ceil(reward), 'sold-coral')
         end
+    end
+    if corals == #config.coralTypes then
+        return lib.notify(src, {
+            type = 'error',
+            description = 'No coral to sell!',
+        })
     end
 end)
 
