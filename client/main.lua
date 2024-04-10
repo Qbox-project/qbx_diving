@@ -146,6 +146,7 @@ local function sellCoral()
     else
         exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
+    ClearPedTasksImmediately(cache.ped)
 end
 
 local function createSeller()
