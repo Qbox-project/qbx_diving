@@ -8,48 +8,30 @@ local pickedUpCoralIndexes = {}
 local function getItemPrice(amount, price)
     for i = 1, #config.priceModifiers do
         local modifier = config.priceModifiers[i]
-        local shouldModify = i == #config.priceModifiers and
-            amount >= modifier.minAmount or
-            amount >= modifier.minAmount and
-            amount <= modifier.maxAmount
+        local shouldModify = i == #config.priceModifiers and amount >= modifier.minAmount or amount >= modifier.minAmount and amount <= modifier.maxAmount
         if shouldModify then
-            price /= 100 * math.random(modifier.minPercentage, modifier.maxPercentage)
-            price = math.ceil(price)
+            price = price / 100 * math.random(modifier.minPercentage, modifier.maxPercentage)
+            break
         end
     end
-
     return price
-end
-
-local function getCoralInInventory(src)
-    local availableCoral = {}
-
-    for i = 1, #config.coralTypes do
-        local coralType = config.coralTypes[i]
-        
-        local count = exports.ox_inventory:GetItemCount(src, coralType.item)
-        if count then
-            availableCoral[coralType] = count
-        end
-    end
-
-    return availableCoral
 end
 
 RegisterNetEvent('qbx_diving:server:sellCoral', function()
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
-    local availableCoral = getCoralInInventory(src)
-    if #availableCoral == 0 then
-        exports.qbx_core:Notify(src, Lang:t('error.no_coral'), 'error')
-        return
-    end
+    if not player then return end
 
-    for coral, amount in pairs(availableCoral) do
-        local price = amount * coral.price
-        local reward = getItemPrice(amount, price)
-        exports.ox_inventory:RemoveItem(src, coral.item, amount)
-        player.Functions.AddMoney('cash', math.ceil(reward / amount), 'sold-coral')
+    for i = 1, #config.coralTypes do
+        local coral = config.coralTypes[i]
+        local count = exports.ox_inventory:GetItemCount(src, coral.item)
+
+        if count then
+            local price = count * coral.price
+            local reward = getItemPrice(count, price)
+            exports.ox_inventory:RemoveItem(src, coral.item, count)
+            player.Functions.AddMoney('cash', math.ceil(reward), 'sold-coral')
+        end
     end
 end)
 
