@@ -23,7 +23,7 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
     if not player then return end
     local corals = #config.coralTypes
 
-    for i = 1, corals do
+    for i = 1, #config.coralTypes do
         local coral = config.coralTypes[i]
         local count = exports.ox_inventory:GetItemCount(src, coral.item)
 
