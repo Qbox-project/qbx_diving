@@ -28,7 +28,7 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
         local count = exports.ox_inventory:GetItemCount(src, coral.item)
 
         if count and count > 0 then
-            corals = corals - 1
+            corals -= 1
             local price = count * coral.price
             local reward = getItemPrice(count, price)
             exports.ox_inventory:RemoveItem(src, coral.item, count)
