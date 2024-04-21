@@ -1,3 +1,6 @@
+lib.versionCheck('Qbox-project/qbx_diving')
+assert(lib.checkDependency('ox_lib', '3.20.0', true))
+
 local config = require 'config.server'
 local sharedConfig = require 'config.shared'
 local currentAreaIndex = math.random(1, #sharedConfig.coralLocations)
