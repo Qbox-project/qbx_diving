@@ -154,8 +154,8 @@ local function createSeller()
     for _, current in pairs(config.sellLocations) do
         current.model = type(current.model) == 'string' and joaat(current.model) or current.model
         lib.requestModel(current.model)
-        local currentCoords = vec4(current.coords.x, current.coords.y, current.coords.z - 1, current.coords.w)
-        local ped = CreatePed(0, current.model, currentCoords.x, currentCoords.y, currentCoords.z, currentCoords.w, false, false)
+        local ped = CreatePed(0, current.model, current.coords.x, current.coords.y, current.coords.z - 1, current.coords.w, false, false)
+        SetModelAsNoLongerNeeded(current.model)
         FreezeEntityPosition(ped, true)
         SetEntityInvincible(ped, true)
         SetBlockingOfNonTemporaryEvents(ped, true)
