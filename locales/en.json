@@ -1,0 +1,15 @@
+{
+    "error": {
+        "canceled": "Canceled",
+        "no_coral": "You don't have any coral to sell..."
+    },
+    "info": {
+        "collecting_coral": "Collecting coral",
+        "diving_area": "Diving Area",
+        "collect_coral": "Collect coral",
+        "collect_coral_dt": "[E] - Collect coral",
+        "checking_pockets": "Checking inventory for coral to sell...",
+        "sell_coral": "Sell coral",
+        "sell_coral_dt": "[E] - Sell coral"
+    }
+}
