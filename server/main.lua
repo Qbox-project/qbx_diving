@@ -39,10 +39,7 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
         end
     end
     if payout == 0 then
-        return lib.notify(src, {
-            type = 'error',
-            description = 'No coral to sell!',
-        })
+        return exports.qbx_core:Notify(locale('error.no_coral'), 'error')
     end
     player.Functions.AddMoney('cash', payout, 'sold-coral')
 end)
