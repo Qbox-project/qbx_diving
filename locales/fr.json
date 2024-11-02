@@ -1,0 +1,15 @@
+{
+    "error": {
+        "canceled": "Annulé",
+        "no_coral": "Vous n'avez pas de corail à vendre..."
+    },
+    "info": {
+        "collecting_coral": "Vous récupérez des coraux",
+        "diving_area": "Zone de Plongée",
+        "collect_coral": "Récupérer des coraux",
+        "collect_coral_dt": "[E] - Récupérer des coraux",
+        "checking_pockets": "Vend des coraux...",
+        "sell_coral": "Vendre des coraux",
+        "sell_coral_dt": "[E] - Vendre des coraux"
+    }
+}
