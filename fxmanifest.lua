@@ -5,11 +5,10 @@ description 'qbx_diving'
 repository 'https://github.com/Qbox-project/qbx_diving'
 version '1.1.1'
 
+ox_lib 'locale'
+
 shared_script {
     '@ox_lib/init.lua',
-    '@qbx_core/shared/locale.lua',
-    'locales/en.lua',
-    'locales/*.lua',
 }
 
 server_scripts {
@@ -23,6 +22,7 @@ client_scripts {
 files {
     'config/client.lua',
     'config/shared.lua',
+    'locales/*.json'
 }
 
 lua54 'yes'
