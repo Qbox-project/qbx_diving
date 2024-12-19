@@ -39,10 +39,7 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
         end
     end
     if payout == 0 then
-        return lib.notify(src, {
-            type = 'error',
-            description = 'No coral to sell!',
-        })
+        return exports.qbx_core:Notify(locale('error.no_coral'), 'error')
     end
     player.Functions.AddMoney('cash', payout, 'sold-coral')
 end)
@@ -56,15 +53,6 @@ local function getNewLocation()
 end
 
 RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
-    local function countTableKeys(tbl)
-        local count = 0
-        for _ in pairs(tbl) do
-            count = count + 1
-        end
-        return count
-    end
-    
-    print('coralIndex is ', coralIndex)
     if pickedUpCoralIndexes[coralIndex] then return end
     local src = source
     local coralType = config.coralTypes[math.random(1, #config.coralTypes)]
@@ -73,9 +61,9 @@ RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
     exports.ox_inventory:AddItem(src, coralType.item, amount)
     pickedUpCoralIndexes[coralIndex] = true
     TriggerClientEvent('qbx_diving:client:coralTaken', -1, coralIndex)
-    TriggerEvent('qbx_diving:server:coralTaken', sharedConfig.coralLocations[currentAreaIndex].corals[coralIndex].coords)   
+    TriggerEvent('qbx_diving:server:coralTaken', sharedConfig.coralLocations[currentAreaIndex].corals[coralIndex].coords)
 
-    if countTableKeys(pickedUpCoralIndexes) == sharedConfig.coralLocations[currentAreaIndex].maxHarvestAmount then
+    if qbx.table.size(pickedUpCoralIndexes) == sharedConfig.coralLocations[currentAreaIndex].maxHarvestAmount then
         pickedUpCoralIndexes = {}
         currentAreaIndex = getNewLocation()
         TriggerClientEvent('qbx_diving:client:newLocationSet', -1, currentAreaIndex)
