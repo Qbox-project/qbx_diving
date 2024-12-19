@@ -62,7 +62,8 @@ RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
     pickedUpCoralIndexes[coralIndex] = true
     TriggerClientEvent('qbx_diving:client:coralTaken', -1, coralIndex)
     TriggerEvent('qbx_diving:server:coralTaken', sharedConfig.coralLocations[currentAreaIndex].corals[coralIndex].coords)
-    if #pickedUpCoralIndexes == sharedConfig.coralLocations[currentAreaIndex].maxHarvestAmount then
+
+    if qbx.table.size(pickedUpCoralIndexes) == sharedConfig.coralLocations[currentAreaIndex].maxHarvestAmount then
         pickedUpCoralIndexes = {}
         currentAreaIndex = getNewLocation()
         TriggerClientEvent('qbx_diving:client:newLocationSet', -1, currentAreaIndex)
