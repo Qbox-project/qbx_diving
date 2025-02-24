@@ -1,6 +1,7 @@
 lib.versionCheck('Qbox-project/qbx_diving')
 assert(lib.checkDependency('ox_lib', '3.20.0', true))
 
+local logger = require '@qbx_core.modules.logger'
 local config = require 'config.server'
 local sharedConfig = require 'config.shared'
 local currentAreaIndex = math.random(1, #sharedConfig.coralLocations)
@@ -11,7 +12,8 @@ local pickedUpCoralIndexes = {}
 local function getItemPrice(amount, price)
     for i = 1, #config.priceModifiers do
         local modifier = config.priceModifiers[i]
-        local shouldModify = i == #config.priceModifiers and amount >= modifier.minAmount or amount >= modifier.minAmount and amount <= modifier.maxAmount
+        local shouldModify = i == #config.priceModifiers and amount >= modifier.minAmount or
+        amount >= modifier.minAmount and amount <= modifier.maxAmount
         if shouldModify then
             price = price / 100 * math.random(modifier.minPercentage, modifier.maxPercentage)
             break
@@ -38,9 +40,22 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
             end
         end
     end
+
     if payout == 0 then
+        logger.log({
+            source = src,
+            event = 'qbx_diving:server:sellCoral',
+            message = locale('logs.tried_sell'),
+        })
         return exports.qbx_core:Notify(locale('error.no_coral'), 'error')
     end
+
+    logger.log({
+        source = src,
+        event = 'qbx_diving:server:sellCoral',
+        message = locale('logs.sell_coral', payout),
+        webhook = config.logs,
+    })
     player.Functions.AddMoney('cash', payout, 'sold-coral')
 end)
 
@@ -63,10 +78,23 @@ RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
     TriggerClientEvent('qbx_diving:client:coralTaken', -1, coralIndex)
     TriggerEvent('qbx_diving:server:coralTaken', sharedConfig.coralLocations[currentAreaIndex].corals[coralIndex].coords)
 
+    logger.log({
+        source = src,
+        event = 'qbx_diving:server:takeCoral',
+        message = locale('logs.collect_coral', coralIndex),
+        webhook = config.logs,
+    })
+
     if qbx.table.size(pickedUpCoralIndexes) == sharedConfig.coralLocations[currentAreaIndex].maxHarvestAmount then
         pickedUpCoralIndexes = {}
         currentAreaIndex = getNewLocation()
         TriggerClientEvent('qbx_diving:client:newLocationSet', -1, currentAreaIndex)
+        logger.log({
+            source = src,
+            event = 'qbx_diving:server:takeCoral',
+            message = locale('logs.new_location', currentAreaIndex),
+            webhook = config.logs,
+        })
     end
 end)
 
