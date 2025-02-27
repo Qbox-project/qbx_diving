@@ -1,4 +1,5 @@
 return {
+    discordWebhook = nil, -- Replace nil with your webhook if you chose to use discord logging over ox_lib logging
     coralTypes = {
         {item = 'dendrogyra_coral', maxAmount = math.random(1, 5), price = math.random(70, 100)},
         {item = 'antipatharia_coral', maxAmount = math.random(2, 7), price = math.random(50, 70)},
@@ -8,5 +9,4 @@ return {
         {minAmount = 11, maxAmount = 15, minPercentage = 70,  maxPercentage = 75},
         {minAmount = 16, minPercentage = 50, maxPercentage = 55},
     },
-    logs = "", -- Add your webhook here or set to false to use ox_lib logger
 }

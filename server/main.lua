@@ -46,6 +46,7 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
             source = src,
             event = 'qbx_diving:server:sellCoral',
             message = locale('logs.tried_sell'),
+            webhook = config.discordWebhook,
         })
         return exports.qbx_core:Notify(locale('error.no_coral'), 'error')
     end
@@ -54,7 +55,7 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
         source = src,
         event = 'qbx_diving:server:sellCoral',
         message = locale('logs.sell_coral', payout),
-        webhook = config.logs,
+        webhook = config.discordWebhook,
     })
     player.Functions.AddMoney('cash', payout, 'sold-coral')
 end)
@@ -82,7 +83,7 @@ RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
         source = src,
         event = 'qbx_diving:server:takeCoral',
         message = locale('logs.collect_coral', coralIndex),
-        webhook = config.logs,
+        webhook = config.discordWebhook,
     })
 
     if qbx.table.size(pickedUpCoralIndexes) == sharedConfig.coralLocations[currentAreaIndex].maxHarvestAmount then
@@ -93,7 +94,7 @@ RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
             source = src,
             event = 'qbx_diving:server:takeCoral',
             message = locale('logs.new_location', currentAreaIndex),
-            webhook = config.logs,
+            webhook = config.discordWebhook,
         })
     end
 end)
