@@ -1,15 +1,21 @@
 {
-    "error": {
-        "canceled": "İptal edildi",
-        "no_coral": "Satacak mercanınız yok..."
-    },
-    "info": {
-        "collecting_coral": "Mercan toplanıyor",
-        "diving_area": "Dalış Alanı",
-        "collect_coral": "Mercan topla",
-        "collect_coral_dt": "[E] - Mercan topla",
-        "checking_pockets": "Mercan Satmak İçin Ceplerin Kontrol Ediliyor...",
-        "sell_coral": "Mercan Sat",
-        "sell_coral_dt": "[E] - Mercan Sat"
-    }
+  "error": {
+    "canceled": "İptal edildi",
+    "no_coral": "Satacak mercanınız yok..."
+  },
+  "info": {
+    "collecting_coral": "Mercan toplanıyor",
+    "diving_area": "Dalış Bölgesi",
+    "collect_coral": "Mercan Topla",
+    "collect_coral_dt": "[E] - Mercan Topla",
+    "checking_pockets": "Satılacak mercanlar için envanter kontrol ediliyor...",
+    "sell_coral": "Mercan Sat",
+    "sell_coral_dt": "[E] - Mercan Sat"
+  },
+  "logs": {
+    "tried_sell": "Oyuncu mercan satmaya çalıştı ancak hiç mercanı yoktu",
+    "sell_coral": "Oyuncu mercanını %s nakit karşılığında sattı",
+    "collect_coral": "Oyuncu %s indeksindeki mercanı aldı",
+    "new_location": "Yeni mercan konumu %s indeksine ayarlandı"
+  }
 }
