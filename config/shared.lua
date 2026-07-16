@@ -1,4 +1,7 @@
 return {
+    sellLocations = {
+        {coords = vec4(-1684.13, -1068.91, 13.15, 100.0), model = 'a_m_m_salton_01', zoneDimensions = vec3(3, 3, 3)}
+    },
     coralLocations = {
         { -- Group 1 Humane Labs Offshore
             blip = vec3(4136.99, 3532.76, -26.21),
