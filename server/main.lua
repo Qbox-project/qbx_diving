@@ -8,6 +8,30 @@ local currentAreaIndex = math.random(1, #sharedConfig.coralLocations)
 
 ---@type table<integer, true> Set of coralIndex
 local pickedUpCoralIndexes = {}
+local harvestCooldowns = {}
+
+---@param source number
+---@param coords vector3
+---@param maxDistance number
+---@return boolean
+local function isPlayerNear(source, coords, maxDistance)
+    local ped = GetPlayerPed(source)
+    if ped == 0 then return false end
+
+    return #(GetEntityCoords(ped) - coords) <= maxDistance
+end
+
+---@param source number
+---@return boolean
+local function isNearSeller(source)
+    for i = 1, #sharedConfig.sellLocations do
+        if isPlayerNear(source, sharedConfig.sellLocations[i].coords.xyz, 5.0) then
+            return true
+        end
+    end
+
+    return false
+end
 
 local function getItemPrice(amount, price)
     for i = 1, #config.priceModifiers do
@@ -25,7 +49,7 @@ end
 RegisterNetEvent('qbx_diving:server:sellCoral', function()
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
-    if not player then return end
+    if not player or not isNearSeller(src) then return end
     local payout = 0
 
     for i = 1, #config.coralTypes do
@@ -48,7 +72,7 @@ RegisterNetEvent('qbx_diving:server:sellCoral', function()
             message = locale('logs.tried_sell'),
             webhook = config.discordWebhook,
         })
-        return exports.qbx_core:Notify(locale('error.no_coral'), 'error')
+        return exports.qbx_core:Notify(src, locale('error.no_coral'), 'error')
     end
 
     logger.log({
@@ -69,15 +93,30 @@ local function getNewLocation()
 end
 
 RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
-    if pickedUpCoralIndexes[coralIndex] then return end
     local src = source
+    if type(coralIndex) ~= 'number' or coralIndex % 1 ~= 0 or pickedUpCoralIndexes[coralIndex] then return end
+
+    local player = exports.qbx_core:GetPlayer(src)
+    local area = sharedConfig.coralLocations[currentAreaIndex]
+    local coral = area and area.corals[coralIndex]
+    if not player or not coral or not isPlayerNear(src, coral.coords, 5.0) then return end
+
+    local currentTime = GetGameTimer()
+    if harvestCooldowns[src] and currentTime - harvestCooldowns[src] < 3000 then return end
+    harvestCooldowns[src] = currentTime
+
+    pickedUpCoralIndexes[coralIndex] = true
     local coralType = config.coralTypes[math.random(1, #config.coralTypes)]
     local amount = math.random(1, coralType.maxAmount)
 
-    exports.ox_inventory:AddItem(src, coralType.item, amount)
-    pickedUpCoralIndexes[coralIndex] = true
+    local added = exports.ox_inventory:AddItem(src, coralType.item, amount)
+    if not added then
+        pickedUpCoralIndexes[coralIndex] = nil
+        return
+    end
+
     TriggerClientEvent('qbx_diving:client:coralTaken', -1, coralIndex)
-    TriggerEvent('qbx_diving:server:coralTaken', sharedConfig.coralLocations[currentAreaIndex].corals[coralIndex].coords)
+    TriggerEvent('qbx_diving:server:coralTaken', coral.coords)
 
     logger.log({
         source = src,
@@ -86,7 +125,7 @@ RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
         webhook = config.discordWebhook,
     })
 
-    if qbx.table.size(pickedUpCoralIndexes) == sharedConfig.coralLocations[currentAreaIndex].maxHarvestAmount then
+    if qbx.table.size(pickedUpCoralIndexes) >= area.maxHarvestAmount then
         pickedUpCoralIndexes = {}
         currentAreaIndex = getNewLocation()
         TriggerClientEvent('qbx_diving:client:newLocationSet', -1, currentAreaIndex)
@@ -103,4 +142,8 @@ end)
 ---@return table<integer, true> pickedUpCoralIndexes
 lib.callback.register('qbx_diving:server:getCurrentDivingArea', function()
     return currentAreaIndex, pickedUpCoralIndexes
+end)
+
+AddEventHandler('playerDropped', function()
+    harvestCooldowns[source] = nil
 end)

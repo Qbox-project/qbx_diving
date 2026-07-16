@@ -151,7 +151,7 @@ local function sellCoral()
 end
 
 local function createSeller()
-    for _, current in pairs(config.sellLocations) do
+    for _, current in pairs(sharedConfig.sellLocations) do
         current.model = type(current.model) == 'string' and joaat(current.model) or current.model
         lib.requestModel(current.model)
         local ped = CreatePed(0, current.model, current.coords.x, current.coords.y, current.coords.z - 1, current.coords.w, false, false)
