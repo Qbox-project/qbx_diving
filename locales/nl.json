@@ -11,5 +11,11 @@
         "checking_pockets": "Zakken controleren om koraal te verkopen...",
         "sell_coral": "Verkoop Koraal",
         "sell_coral_dt": "[E] - Verkoop Koraal"
+    },
+    "logs": {
+        "tried_sell": "Speler probeerde koraal te verkopen, maar had er geen",
+        "sell_coral": "Speler verkocht koraal voor%scontant geld",
+        "collect_coral": "Speler pakte koraal op index%s",
+        "new_location": "Nieuwe koraallocatie ingesteld op index%s"
     }
 }
