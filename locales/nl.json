@@ -14,8 +14,8 @@
     },
     "logs": {
         "tried_sell": "Speler probeerde koraal te verkopen, maar had er geen",
-        "sell_coral": "Speler verkocht koraal voor%scontant geld",
-        "collect_coral": "Speler pakte koraal op index%s",
-        "new_location": "Nieuwe koraallocatie ingesteld op index%s"
+        "sell_coral": "Speler verkocht koraal voor %s contant geld",
+        "collect_coral": "Speler pakte koraal op index %s",
+        "new_location": "Nieuwe koraallocatie ingesteld op index %s"
     }
 }
