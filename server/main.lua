@@ -102,7 +102,7 @@ RegisterNetEvent('qbx_diving:server:takeCoral', function(coralIndex)
     if not player or not coral or not isPlayerNear(src, coral.coords, 5.0) then return end
 
     local currentTime = GetGameTimer()
-    if harvestCooldowns[src] and currentTime - harvestCooldowns[src] < 3000 then return end
+    if harvestCooldowns[src] and currentTime - harvestCooldowns[src] < 1500 then return end
     harvestCooldowns[src] = currentTime
 
     pickedUpCoralIndexes[coralIndex] = true

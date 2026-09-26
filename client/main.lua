@@ -31,7 +31,6 @@ local function takeCoral(coralIndex)
             flag = 16
         }
     }) then
-        TriggerEvent('qbx_diving:client:coralTaken', coralIndex)
         TriggerServerEvent('qbx_diving:server:takeCoral', coralIndex)
     end
 end
